@@ -1,0 +1,280 @@
+" .vimrc
+set encoding=utf-8
+set termencoding=utf-8
+set runtimepath+=~/.dotfiles/vim
+
+" Leader
+let mapleader = ","
+set backspace=2   " Backspace deletes like most programs in insert mode
+set nobackup
+set nowritebackup
+set noswapfile    " http://robots.thoughtbot.com/post/18739402579/global-gitignore#comment-458413287
+set history=50
+set ruler         " show the cursor position all the time
+set showcmd       " display incomplete commands
+set incsearch     " do incremental searching
+set laststatus=2  " Always display the status line
+set autowrite     " Automatically :write before running commands
+set modelines=0   " Disable modelines as a security precaution
+set nomodeline
+set belloff=all   " Disable error bells
+
+" Check for bundles & pugins
+if filereadable(expand("~/.vimrc.bundles"))
+  source ~/.vimrc.bundles
+endif
+
+" Switch syntax highlighting on, when the terminal has colors
+" Also switch on highlighting the last used search pattern.
+if (&t_Co > 2 || has("gui_running")) && !exists("syntax_on")
+  syntax on
+endif
+
+set nocompatible  " Forget compatibility with vi. Who cares.
+
+" Get SID prefix of vimrc (see :h <SID>)
+function! s:SID_PREFIX()
+  return matchstr(expand('<sfile>'), '<SNR>\d\+_')
+endfunction
+
+if $TERM == "xterm-256color"
+  set t_Co=256
+endif
+
+set timeout timeoutlen=1000 ttimeoutlen=500
+
+set showmatch                     " show matching brackets
+if exists("&relativenumber")
+  set relativenumber              " use relative line numbers
+endif
+set number                        " except for the current line - absolute number there
+set backspace=indent,eol,start    " make backspace behave in a sane manner
+set mousehide                     " hide mouse when typing
+set foldenable                    " enable code folding
+set history=1000
+set ffs=unix,mac,dos              " default file types
+set autoread                      " automatically update file when editted outside of vim
+set path+=**                      " search files under current path
+set nojoinspaces                  " Use one space, not two, after punctuation.
+
+" use <C>hjkl to switch between splits
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+" -------------------------------------------------------------------
+" Move line(s) up or down via C-j and C-k respectively
+" -------------------------------------------------------------------
+" Normal mode
+nnoremap <C-j> :m .+1<CR>==
+nnoremap <C-k> :m .-2<CR>==
+
+" Insert mode
+inoremap <C-j> <ESC>:m .+1<CR>==gi
+inoremap <C-k> <ESC>:m .-2<CR>==gi
+
+" Visual mode
+vnoremap <C-j> :m '>+1<CR>gv=gv
+vnoremap <C-k> :m '<-2<CR>gv=gv
+
+" What to do with files and focus
+set autowrite           " write out old file when switching between files
+set autoread            " reload files changed on disk, i.e. via `git checkout`
+au FocusLost * :wa      " save file when Vim loses focus
+set hidden              " switch beteen buffers without saving
+
+" With Git who needs backup files?
+set nobackup
+set noswapfile
+
+" Set the color scheme
+set background=dark
+silent! colorscheme romheat
+
+" Set tab stuff
+set tabstop=2           " 2 spaces for a tab
+set shiftwidth=2        " 2 spaces for autoindenting
+set softtabstop=2       " when <BS>, pretend a tab is removed even if spaces
+set expandtab           " expand tabs to spaces (overloadable by file type)
+
+" Scrolling
+set scrolloff=8         " show context above/below cursor line
+set sidescrolloff=10    " number of cols from horizontal edge to  start scrolling
+set sidescroll=1        " number of cols to scroll at a time
+
+" Miscellaneous
+" toggle listchars on or off
+noremap <Leader>i :set list!<CR>
+
+" Paste mode to prevent autoindentation of pasted lines
+set pastetoggle=<F2>
+
+set clipboard=unnamed   " yank and paste with the system clipboard
+
+" show cursorline only in active window
+if has("autocmd")
+  autocmd WinLeave * set nocursorline
+  autocmd WinEnter * set cursorline
+endif
+
+" Map escape to jj -- much faster to reach and type
+imap jj <esc>
+
+" Searching
+set incsearch           " use incremental search
+set hlsearch            " highlight search results
+set ignorecase          " ignore case when searching
+set smartcase           " ignore case if search string is all lower case, case-sensitve otherwise
+
+" remove search highlighting with <F3>
+nnoremap <silent> <leader>/ :nohlsearch<CR>
+
+" -------------------------------------------------------------------
+" Preserve function: saves search history and cursor position
+" call with some command, like removing all whitespace
+" -------------------------------------------------------------------
+function! Preserve(command)
+  " preparation: save last search, and cursor position
+  let _s=@/
+  let l = line(".")
+  let c = col(".")
+  " do the business
+  execute a:command
+  " clean up: restore previous search history and cursor position
+  let @/=_s
+  call cursor(l,c)
+endfunction
+
+" strip whitespace from all lines in file
+nmap _$ :call Preserve("%s/\\s\\+$//e")<CR>
+
+" reindent entire file
+nmap _= :call Preserve("normal gg=G")<CR>
+
+" Splits
+nnoremap <leader>v <C-w>v<C-w>l   " open a vertical split and switch to it (,v)
+nnoremap <leader>h <C-w>s<C-w>j   " open a horizontal split and switch to it (,h)
+
+" -------------------------------------------------------------------
+" vimrc shortcuts
+" -------------------------------------------------------------------
+" open vimrc in new tab for editing
+nmap <leader>ev :tabedit $MYVIMRC<cr>
+
+" automatically source .vimrc when it is saved (from vimcasts.org #24)
+if has("autocmd")
+  autocmd! bufwritepost .vimrc source $MYVIMRC
+endif
+
+" reload .vimrc
+map <silent> <leader>V :source ~/.vimrc<CR>:filetype detect<CR>:exe ":echo 'vimrc reloaded'"<CR>
+
+" Run commands that require an interactive shell
+nnoremap <Leader>r :RunInInteractiveShell<Space>
+
+" -------------------------------------------------------------------
+" Command line completion
+" -------------------------------------------------------------------
+" Tab completion
+" will insert tab at beginning of line,
+" will use completion if not at beginning
+set wildmode=list:longest,list:full
+function! InsertTabWrapper()
+    let col = col('.') - 1
+    if !col || getline('.')[col - 1] !~ '\k'
+        return "\<Tab>"
+    else
+        return "\<C-p>"
+    endif
+endfunction
+inoremap <Tab> <C-r>=InsertTabWrapper()<CR>
+inoremap <S-Tab> <C-n>
+
+" -------------------------------------------------------------------
+" control whitespace preferences based on filetype
+" -------------------------------------------------------------------
+if has("autocmd")
+  " enable file type detection
+  filetype on
+
+  " syntax of these languages is fussy over tabs Vs spaces
+  autocmd FileType make setlocal ts=8 sts=8 sw=8 noexpandtab
+  autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
+
+  " treat .rss files as XML
+  autocmd BufNewFile,BufRead *.rss,*.atom setfiletype xml
+
+  " spell check Git commit messages
+  autocmd BufRead COMMIT_EDITMSG setlocal spell spelllang=en_us
+
+  " start commit message in insert mode
+  autocmd BufNewFile,BufRead COMMIT_EDITMSG call feedkeys('ggi', 't')
+
+  " markdown files
+  autocmd BufNewFile,BufRead *.md,*.mkd,*.markdown setfiletype markdown
+  autocmd BufNewFile,BufRead *.md,*.mkd,*.markdown set spell spelllang=en_us
+  autocmd FileType markdown setlocal tw=100
+
+  " non ruby files related to Ruby
+  autocmd BufNewFile,BufRead Gemfile,Gemfile.lock,Guardfile setfiletype ruby
+  autocmd BufNewFile,BufRead Thorfile,config.ru,Vagrantfile setfiletype ruby
+  autocmd BufNewFile,BufRead Berksfile,Berksfile.lock setfiletype ruby
+  autocmd BufNewFile,BufRead Rakefile setfiletype rake
+  autocmd BufNewFile,BufRead Rakefile set syntax=ruby
+  autocmd BufNewFile,BufRead *.rake setfiletype rake
+  autocmd BufNEwFile,BufRead *.rake set syntax=ruby
+
+  " Python files
+  let NERDTreeIgnore = ['\.pyc$', '\~$', '\.rbc$']
+  autocmd BufNewFile,BufRead *.py set ts=2 sts=2 sw=2 expandtab
+
+endif
+
+" move buffers
+map gn :bn<cr>
+map gp :bp<cr>
+map gd :bd<cr>
+
+" Open new split panes to right and bottom, which feels more natural
+set splitbelow
+set splitright
+
+" Quicker window movement
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-h> <C-w>h
+nnoremap <C-l> <C-w>l
+
+" Local config
+if filereadable($HOME . "/.vimrc.local")
+  source ~/.vimrc.local
+endif
+
+" -------------------------------------------------------------------
+"  statusbar
+" -------------------------------------------------------------------
+set statusline=
+set statusline+=%#DiffAdd#%{(mode()=='n')?'\ \ NORMAL\ ':''}
+set statusline+=%#DiffChange#%{(mode()=='i')?'\ \ INSERT\ ':''}
+set statusline+=%#DiffDelete#%{(mode()=='r')?'\ \ RPLACE\ ':''}
+set statusline+=%#Cursor#%{(mode()=='v')?'\ \ VISUAL\ ':''}
+set statusline+=\ %n\           " buffer number
+set statusline+=%#Visual#       " colour
+set statusline+=%{&paste?'\ PASTE\ ':''}
+set statusline+=%{&spell?'\ SPELL\ ':''}
+set statusline+=%#CursorIM#     " colour
+set statusline+=%R              " readonly flag
+set statusline+=%M              " modified [+] flag
+set statusline+=%#Cursor#       " colour
+set statusline+=%#CursorLine#   " colour
+set statusline+=\ %t\           " short file name
+set statusline+=%=              " right align
+set statusline+=%#CursorLine#   " colour
+set statusline+=\ %Y\           " file type
+set statusline+=%#CursorIM#     " colour
+set statusline+=\ %3l:%-2c\     " line + column
+set statusline+=%#Cursor#       " colour
+set statusline+=\ %3p%%\        " percentage
+" -------------------------------------------------------------------
+"  finis
+" -------------------------------------------------------------------
