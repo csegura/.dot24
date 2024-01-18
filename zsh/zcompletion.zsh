@@ -1,10 +1,8 @@
 autoload -U compinit && compinit                                                                                       
 zmodload -i zsh/complist
 
-# man zshcontrib
-zstyle ':vcs_info:*' actionformats '%F{5}(%f%s%F{5})%F{3}-%F{5}[%F{2}%b%F{3}|%F{1}%a%F{5}]%f '
-zstyle ':vcs_info:*' formats '%F{5}(%f%s%F{5})%F{3}-%F{5}[%F{2}%b%F{5}]%f '
-zstyle ':vcs_info:*' enable git #svn cvs 
+setopt ALWAYS_TO_END
+setopt COMPLETE_IN_WORD
 
 # Enable completion caching, use rehash to clear
 zstyle ':completion::complete:*' use-cache on
@@ -23,9 +21,12 @@ zstyle ':completion:*' select-prompt '%SScrolling active: current selection at %
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-]#)*=01;34=0=01'
 
 # list of completers to use
-zstyle ':completion:*::::' completer _expand _complete _ignored _approximate
+#zstyle ':completion:*::::' completer _expand _complete _ignored _approximate
+#zstyle ':completion:*' menu select=1 _complete _ignored _approximate
+zstyle ':completion:*' completer _extensions _complete _approximate
+zstyle ':completion:*' menu select
 
-zstyle ':completion:*' menu select=1 _complete _ignored _approximate
+zstyle ':completion:*:*:*:*:descriptions' format '%F{green}-- %d --%f'
 
 # insert all expansions for expand completer
 # zstyle ':completion:*:expand:*' tag-order all-expansions
@@ -38,11 +39,11 @@ zstyle ':completion:*:*:-subscript-:*' tag-order indexes parameters
 
 # formatting and messages
 zstyle ':completion:*' verbose yes
-zstyle ':completion:*:descriptions' format '%B%d%b'
-zstyle ':completion:*:messages' format '%d'
-zstyle ':completion:*:warnings' format 'No matches for: %d'
-zstyle ':completion:*:corrections' format '%B%d (errors: %e)%b'
-zstyle ':completion:*' group-name ''
+#zstyle ':completion:*:descriptions' format '%B%d%b'
+#zstyle ':completion:*:messages' format '%d'
+#zstyle ':completion:*:warnings' format 'No matches for: %d'
+#zstyle ':completion:*:corrections' format '%B%d (errors: %e)%b'
+#zstyle ':completion:*' group-name ''
  
 # ignore completion functions (until the _ignored completer)
 zstyle ':completion:*:functions' ignored-patterns '_*'

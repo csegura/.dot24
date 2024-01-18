@@ -21,6 +21,9 @@ setopt PUSHD_SILENT         # Do not print the directory stack after pushd or po
 setopt CORRECT              # Spelling correction
 setopt CDABLE_VARS          # Change directory to a path stored in a variable.
 setopt EXTENDED_GLOB        # Use extended globbing syntax.
+setopt AUTO_LIST            # automatically list choices on ambiguous completion
+setopt AUTO_MENU            # automatically use menu completion
+setopt ALWAYS_TO_END        # move cursor to end if word had one match
 
 unsetopt BEEP               # Disable beeps
 unsetopt CORRECT		 	      # Disable corrector
@@ -31,7 +34,7 @@ SAVEHIST=10000
 HISTFILE=~/.cache/zsh/history
 setopt appendhistory
 
-setopt autocd
+setopt AUTOCD
 setopt EXTENDED_HISTORY          # Write the history file in the ":start:elapsed;command" format.
 setopt SHARE_HISTORY             # Share history between all sessions.
 setopt HIST_EXPIRE_DUPS_FIRST    # Expire a duplicate event first when trimming history.
@@ -45,4 +48,4 @@ setopt BANG_HIST                 # Treat '!' specially
 
 # show colors
 # for code in {000..255}; do print -P -- "$code: %F{$code}Color%f"; done
-PROMPT="%{%F{green}%}%n%{%f%}@%{%F{blue}%}%m %{%F{yellow}%}%~ "'${vcs_info_msg_0_}'"%(?.%F{green}%#.%F{red}%#%f)%f " 
+PROMPT="%{%F{green}%}%n%{%f%}@%{%F{blue}%}%m %{%F{yellow}%}%~ "'${vcs_info_msg_0_}'"%(?.%{%F{green}%}%#%{%f%}.%{%F{red}%}%#%{%f%}) " 

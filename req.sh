@@ -19,3 +19,10 @@ check_package zsh
 check_package zsh-autosuggestions 
 check_package zsh-syntax-highlighting
 check_package fzf
+
+# Link config files
+ln -s ~/.dotfiles/zsh/.zshrc ~/.zshrc
+ln -s ~/.dotfiles/vim/vimrc ~/.vimrc
+ln -s ~/.dotfiles/tmux/tmux.conf ~/.tmux.conf
+
+

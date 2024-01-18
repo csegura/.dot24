@@ -54,4 +54,4 @@ bindkey "^r" 	      history-incremental-search-backward
 bindkey "^[s"  	    sudo-command-line # alt+s (zfunctions.zsh)
 
 # Custom ZSH Binds
-bindkey "^ "        autosuggest-accept
+#bindkey "^ "        autosuggest-accept
