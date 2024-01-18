@@ -1,3 +1,9 @@
+
+# load file
+function load_file() {
+    [ -f "$1" ] && source "$1"
+}
+
 # Insert sudo at begining
 # Alt+s or ESC, s: inserts "sudo " at the start of line:
 function sudo-command-line() {
@@ -17,6 +23,7 @@ zle-keymap-select () {
         echo -ne "\e[2 q"
     fi
 }
+
 precmd_functions+=(zle-keymap-select)
 zle -N zle-keymap-select
 echo -ne "\e[2 q"
