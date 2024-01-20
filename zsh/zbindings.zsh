@@ -1,4 +1,3 @@
-
 # Keyboard vi-mode
 bindkey -v
 export KEYTIMEOUT=1
@@ -18,15 +17,11 @@ export KEYTIMEOUT=1
 [[ -n "${key[Shift-Tab]}" ]] && bindkey -- "${key[Shift-Tab]}"  reverse-menu-complete
 [[ -n "${key[CRTLL]}"     ]] && bindkey -- "${key[CRTLL]}"      backward-word
 [[ -n "${key[CRTLR]}"     ]] && bindkey -- "${key[CRTLR]}"      forward-word
-# Fix Ctrl Left/Right
-#bindkey "^[Od" backward-word
-#bindkey "^[Oc" forward-word
-#bindkey "^[[1;5D" backward-word
-#bindkey "^[[1;5C" forward-word
 
 # required by syntax hightlighting
 zle -N backwards-delete-part
 
+# Improve movements
 bindkey "^[^H" 	    backwards-delete-part  # urxvt: Alt+BackSpace
 bindkey "^H" 	      backward-delete-char  # C-H: Backspace
 bindkey "^[[3^"     delete-word  # urxvt: C-delete
@@ -36,22 +31,25 @@ bindkey "^[Oc" 	    forward-word  # urxvt: C-Right
 bindkey "^F" 	      forward-word  # urxvt: C-F
 bindkey "^B" 	      backward-word # urxvt: C-B
 
+# Go normal mode double ESC
+bindkey -rpM viins '^[^['
+
+bindkey -- "^A" beginning-of-line
+bindkey -- "^B" backward-char
+bindkey -- "^E" end-of-line
+bindkey -- "^W" backward-kill-word
+
 # History search 
 autoload -U up-line-or-beginning-search
 autoload -U down-line-or-beginning-search
 zle -N up-line-or-beginning-search
 zle -N down-line-or-beginning-search
-
 bindkey "^[[A"      up-line-or-beginning-search # Up
 bindkey "^[[B"      down-line-or-beginning-search # Down
 
-#bindkey "^[OA" 	  up-line-or-history # up
-#bindkey "^[OB" 	  down-line-or-history # down
-#bindkey -- "^[[A" 	history-search-backward # up
-#bindkey -- "^[[B" 	history-search-forward # down
+# Uncomment if no fzf
+#bindkey "^r" 	      history-incremental-search-backward
 
-bindkey "^r" 	      history-incremental-search-backward
-bindkey "^[s"  	    sudo-command-line # alt+s (zfunctions.zsh)
+# Sudo a command
+bindkey "^[s"  	    sudo-command-line 
 
-# Custom ZSH Binds
-#bindkey "^ "        autosuggest-accept
