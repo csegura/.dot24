@@ -30,43 +30,45 @@ zstyle ':vcs_info:git*:*' stagedstr '+'
 if [[ $ZSH_VERSION == 4.3.<11->* || $ZSH_VERSION == 4.<4->* || $ZSH_VERSION == <5->* ]] ; then
   
   # hook for untracked files (prefix uFiles)
-  +vi-untracked() {
-    local files=$(git status --porcelain | grep "??" |  wc -l)
-    if [[ "$files" -gt 0 ]];  then
-       hook_com[misc]+="%F{red}u$files%{%f%}"
-    fi
-  }
+  +vi-git_status() {
+    local gitstatus=$(git status --porcelain) 
+    # parse status
+    local untrack=$(echo "$gitstatus" | grep "^??" |  wc -l)
+    local modified=$(echo "$gitstatus" | grep "^ M" |  wc -l)
+    local staged=$(echo "$gitstatus" | grep "^M" |  wc -l)
+    local tocommit=$(echo "$gitstatus" | grep "^MM" |  wc -l)
+    local outgoing=$(git rev-list remotes/origin/main.. 2>/dev/null | wc -l)
+    local stashed=$(git rev-parse --verify refs/stash &>/dev/null ; echo $?)
 
-  # local modified files
-  +vi-modified() {
-    local files=$(git status --porcelain | grep "^ M" |  wc -l)
-    if [[ "$files" -gt 0 ]];  then
-       hook_com[misc]+="%F{cyan}m$files%{%f%}"
-    fi
-  }
-  
-  # local modified files
-  +vi-pending() {
     local gitdir="$(git rev-parse --git-dir 2>/dev/null)"
     local branch="$(cat ${gitdir}/HEAD 2>/dev/null)"
     branch=${branch##*/heads/}
-    local files="$(git log ${branch}..origin/${branch} --oneline | wc -l)"
-    if [[ "$files" -gt 0 ]];  then
-       hook_com[misc]+="%F{red}↓$files%{%f%}"
+    local pulls="$(git log ${branch}..origin/${branch} --oneline | wc -l)"
+
+    # print
+    if [[ "$untrack" -gt 0 ]];  then
+        hook_com[misc]+="%F{red}u$untrack%{%f%}"
+    fi
+    if [[ "$modified" -gt 0 ]];  then
+        hook_com[misc]+="%F{cyan}m$modified%{%f%}"
+    fi
+    if [[ "$staged" -gt 0 ]];  then
+        hook_com[misc]+="%F{yellow}s$staged%{%f%}"
+    fi
+    if [[ "$tocommit" -gt 0 ]];  then
+        hook_com[misc]+="%F{magenta}c$tocommit%{%f%}"
+    fi
+    if [[ "$outgoing" -gt 0 ]];  then
+        hook_com[misc]+="%F{green}↑$outgoing%{%f%}"
+    fi
+    if [[ "$stashed" -eq 0 ]];  then
+        hook_com[misc]+="%F{green}s%{%f%}"
+    fi
+    if [[ "$pulls" -gt 0 ]];  then
+        hook_com[misc]+="%F{red}↓$pulls%{%f%}"
     fi
   }
 
-  # local staged files pendig commit 
-  +vi-tocommit() {
-    local files=$(git status --porcelain | grep "^M" |  wc -l)
-    if [[ "$files" -gt 0 ]];  then
-       hook_com[misc]+="%F{yellow}s$files%{%f%}"
-    fi
-    local files=$(git status --porcelain | grep "^MM" |  wc -l)
-    if [[ "$files" -gt 0 ]];  then
-       hook_com[misc]+="%F{magenta}c$files%{%f%}"
-    fi
-  }
 
   # unpushed commits
   +vi-outgoing() {
@@ -86,13 +88,6 @@ if [[ $ZSH_VERSION == 4.3.<11->* || $ZSH_VERSION == 4.<4->* || $ZSH_VERSION == <
     fi
   }
 
-  # hook for stashed files
-  +vi-stashed() {
-    if git rev-parse --verify refs/stash &>/dev/null ; then
-      hook_com[staged]+='s'
-    fi
-  }
-
-  zstyle ':vcs_info:git*+set-message:*' hooks stashed untracked outgoing modified tocommit pending
+  zstyle ':vcs_info:git*+set-message:*' hooks git_status
 fi
 
