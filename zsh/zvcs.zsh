@@ -45,8 +45,19 @@ if [[ $ZSH_VERSION == 4.3.<11->* || $ZSH_VERSION == 4.<4->* || $ZSH_VERSION == <
     fi
   }
   
-  # local staged files pendig commit 
+  # local modified files
   +vi-pending() {
+    local gitdir="$(git rev-parse --git-dir 2>/dev/null)"
+    local branch="$(cat ${gitdir}/HEAD 2>/dev/null)"
+    branch=${branch##*/heads/}
+    local files="$(git log ${branch}..origin/${branch} --oneline | wc -l)"
+    if [[ "$files" -gt 0 ]];  then
+       hook_com[misc]+="%F{red}↓$files%{%f%}"
+    fi
+  }
+
+  # local staged files pendig commit 
+  +vi-tocommit() {
     local files=$(git status --porcelain | grep "^M" |  wc -l)
     if [[ "$files" -gt 0 ]];  then
        hook_com[misc]+="%F{yellow}s$files%{%f%}"
@@ -82,6 +93,6 @@ if [[ $ZSH_VERSION == 4.3.<11->* || $ZSH_VERSION == 4.<4->* || $ZSH_VERSION == <
     fi
   }
 
-  zstyle ':vcs_info:git*+set-message:*' hooks stashed untracked outgoing modified pending
+  zstyle ':vcs_info:git*+set-message:*' hooks stashed untracked outgoing modified tocommit pending
 fi
 
