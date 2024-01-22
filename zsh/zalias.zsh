@@ -50,3 +50,8 @@ alias ipp="curl -s http://whatismyip.akamai.com/"
 
 # misc
 alias wiki='dig +short txt $1.wp.dg.cx'
+
+# git
+alias gs="git status -sb"
+alias gl='git log --date=short --format="%C(green)%C(bold)%cd %C(auto)%h%d %s (%an)" --graph --color=always'
+
