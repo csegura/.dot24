@@ -61,9 +61,9 @@ if [[ $ZSH_VERSION == 4.3.<11->* || $ZSH_VERSION == 4.<4->* || $ZSH_VERSION == <
     if [[ "$outgoing" -gt 0 ]];  then
         hook_com[misc]+="%F{green}↑$outgoing%{%f%}"
     fi
-    if [[ "$stashed" -eq 0 ]];  then
-        hook_com[misc]+="%F{green}s%{%f%}"
-    fi
+    #if [[ "$stashed" -eq 0 ]];  then
+    #    hook_com[misc]+="%F{green}s%{%f%}"
+    #fi
     if [[ "$pulls" -gt 0 ]];  then
         hook_com[misc]+="%F{red}↓$pulls%{%f%}"
     fi
