@@ -6,10 +6,6 @@ set runtimepath+=~/.dotfiles/vim
 " Leader
 let mapleader = ","
 set backspace=2   " Backspace deletes like most programs in insert mode
-set nobackup
-set nowritebackup
-set noswapfile    " http://robots.thoughtbot.com/post/18739402579/global-gitignore#comment-458413287
-set history=50
 set ruler         " show the cursor position all the time
 set showcmd       " display incomplete commands
 set incsearch     " do incremental searching
@@ -18,6 +14,7 @@ set autowrite     " Automatically :write before running commands
 set modelines=0   " Disable modelines as a security precaution
 set nomodeline
 set belloff=all   " Disable error bells
+set nospell       " Disable spell
 
 " Check for bundles & pugins
 if filereadable(expand("~/.vimrc.bundles"))
@@ -88,6 +85,7 @@ set hidden              " switch beteen buffers without saving
 " With Git who needs backup files?
 set nobackup
 set noswapfile
+set nowritebackup
 
 " Set the color scheme
 set background=dark
@@ -191,7 +189,7 @@ function! InsertTabWrapper()
 endfunction
 inoremap <Tab> <C-r>=InsertTabWrapper()<CR>
 inoremap <S-Tab> <C-n>
-
+  
 " -------------------------------------------------------------------
 " control whitespace preferences based on filetype
 " -------------------------------------------------------------------
@@ -307,6 +305,3 @@ hi User2 ctermfg=007 ctermbg=236 guibg=#303030 guifg=#adadad
 hi User3 ctermfg=236 ctermbg=236 guibg=#303030 guifg=#303030
 hi User4 ctermfg=239 ctermbg=239 guibg=#4e4e4e guifg=#4e4e4e
 
-" -------------------------------------------------------------------
-"  finis
-" -------------------------------------------------------------------
