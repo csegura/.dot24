@@ -18,11 +18,10 @@ alias hf='du -cks * | sort -rn | head -15'
 # open ports
 alias openports='lsof -iTCP -sTCP:LISTEN -P'
 
-
 # fdfind
 alias fd='fdfind'
 # bat
-alias bat='batcat'
+alias bat='batcat --color=always --style=numbers'
 
 # History grep
 alias hg='history | grep'
