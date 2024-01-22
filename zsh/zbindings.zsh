@@ -29,15 +29,15 @@ bindkey "^[[3"      delete-word  # urxvt: Alt-delete
 bindkey '^U'        backward-kill-line
 
 # Ctrl -> Ctrl <-
-# urxvt
+# others
 bindkey "^F" 	      forward-word
 bindkey "^B" 	      backward-word
 # term (ssh)
 bindkey "^[[1;5D"   backward-word
 bindkey "^[[1;5C"   forward-word
-# others
-#bindkey "^[Od"	    backward-word
-#bindkey "^[Oc"	    forward-word
+# others urxvt
+bindkey "^[Od"	    backward-word
+bindkey "^[Oc"	    forward-word
 
 # History search 
 autoload -U    up-line-or-beginning-search
