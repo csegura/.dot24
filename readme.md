@@ -4,13 +4,40 @@ It's time to reorganise my .dotfiles to keep a clean and functional configuratio
 
 ## zsh
 
+Historial (vi insert)
+- `ctrl-p` Prev entry from history
+- `ctrl-n` Next entry from history
 
+Movement (vi insert)
+- `Home` beginning-of-line
+- `End` end-of-line
+- `Insert` overwrite-mode
+- `Backspace` backward-delete-char
+- `Delete` delete-char
+- `Up` up-line-or-history
+- `Down` down-line-or-history
+- `Left` backward-char
+- `Right` forward-char
+- `PageUp` beginning-of-buffer-or-history
+- `PageDown` end-of-buffer-or-history
+- `Shift-Tab` reverse-menu-complete
+- `CRTLL` backward-word
+- `CRTLR` forward-word
 
-## fzf
+- `Alt-Backspace` backwards-delete-part
+- `Ctrl-H` backward-delete-char
+- `delete` delete-word
+- `alt-delete` delete-word  
+- `Ctrl-U` backward-kill-line
+- `Ctrl-Left` backward-word
+- `Ctrl-Right` forward-word
 
-ctrl-r    history
-ctrl-t    file 
-alt-c     directory
+# Fzf (use fdfind / bat[cat])
+
+- `**` expansion
+- `Ctrl-T` Files
+- `Ctrl-R` History
+- `Alt-C` Directory nav
 
 ## tmux
 
@@ -26,7 +53,6 @@ alt-c     directory
 # Resize
 
 - Prefix + Ctrl + ArrowKeys
-
 
 ## i3wm
 
