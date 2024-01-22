@@ -27,3 +27,4 @@ zle-keymap-select () {
 precmd_functions+=(zle-keymap-select)
 zle -N zle-keymap-select
 echo -ne "\e[2 q"
+
