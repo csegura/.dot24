@@ -21,31 +21,39 @@ export KEYTIMEOUT=1
 # required by syntax hightlighting
 zle -N backwards-delete-part
 
-# Improve movements
+# Improve delete movements
 bindkey "^[^H" 	    backwards-delete-part  # urxvt: Alt+BackSpace
 bindkey "^H" 	      backward-delete-char  # C-H: Backspace
 bindkey "^[[3^"     delete-word  # urxvt: C-delete
 bindkey "^[[3"      delete-word  # urxvt: Alt-delete
-bindkey "^[Od" 	    backward-word # urxvt: C-Left
-bindkey "^[Oc" 	    forward-word  # urxvt: C-Right
-bindkey "^F" 	      forward-word  # urxvt: C-F
-bindkey "^B" 	      backward-word # urxvt: C-B
+bindkey '^U'        backward-kill-line
 
-# Go normal mode double ESC
-bindkey -rpM viins '^[^['
-
-bindkey -- "^A" beginning-of-line
-bindkey -- "^B" backward-char
-bindkey -- "^E" end-of-line
-bindkey -- "^W" backward-kill-word
+# Ctrl -> Ctrl <-
+# urxvt
+bindkey "^F" 	      forward-word
+bindkey "^B" 	      backward-word
+# term (ssh)
+bindkey "^[[1;5D"   backward-word
+bindkey "^[[1;5C"   forward-word
+# others
+#bindkey "^[Od"	    backward-word
+#bindkey "^[Oc"	    forward-word
 
 # History search 
-autoload -U up-line-or-beginning-search
-autoload -U down-line-or-beginning-search
-zle -N up-line-or-beginning-search
-zle -N down-line-or-beginning-search
-bindkey "^[[A"      up-line-or-beginning-search # Up
-bindkey "^[[B"      down-line-or-beginning-search # Down
+autoload -U    up-line-or-beginning-search
+autoload -U    down-line-or-beginning-search
+zle -N         up-line-or-beginning-search
+zle -N         down-line-or-beginning-search
+bindkey "^p"   up-line-or-beginning-search 
+bindkey "^n"   down-line-or-beginning-search 
+#bindkey "^[[A"      up-line-or-beginning-search # Up
+#bindkey "^[[B"      down-line-or-beginning-search # Down
+
+# Movements for compinit
+bindkey -M menuselect 'h' vi-backward-char
+bindkey -M menuselect 'k' vi-up-line-or-history
+bindkey -M menuselect 'j' vi-down-line-or-history
+bindkey -M menuselect 'l' vi-forward-char
 
 # Uncomment if no fzf
 #bindkey "^r" 	      history-incremental-search-backward
