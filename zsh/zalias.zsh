@@ -20,8 +20,10 @@ alias openports='lsof -iTCP -sTCP:LISTEN -P'
 
 # fdfind
 alias fd='fdfind'
-# bat
+# batcat
 alias bat='batcat --color=always --style=numbers'
+alias -g -- -h='-h 2>&1 | batcat --language=help --style=plain'
+alias -g -- --help='--help 2>&1 | batcat --language=help --style=plain'
 
 # History grep
 alias hg='history | grep'
@@ -44,9 +46,14 @@ ifzf-history-widget-accept() {
 zle     -N     fzf-history-widget-accept
 bindkey '^X^R' fzf-history-widget-accept
 
-# network
+# network local ips/public ip/open ports
 alias ips="ip addr show |egrep 'inet '| awk '{print $2 \" \" $NF}'" 
 alias ipp="curl -s http://whatismyip.akamai.com/"
+
+# system info
+alias cpu="awk -v OFMT='%5.3g' '\$1 == \"cpu\" { print( \"Used Cpu: \", 100*(\$2+\$4)/(\$2+\$4+\$5),\"%\" ) }' /proc/stat"
+
+alias opp="netstat -tulanp"
 
 # misc
 alias wiki='dig +short txt $1.wp.dg.cx'
