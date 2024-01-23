@@ -20,10 +20,13 @@ check_package zsh-autosuggestions       # zsh autosuggestions
 check_package zsh-syntax-highlighting   # zsh syntax-highlighting command line
 check_package fd-find                   # better find (use with fuzzy find)
 check_package fzf                       # fuzzy find
+check_package batcat                    # better cat (used with fzf)
 
 # Link config files
 ln -s ~/.dotfiles/zsh/zshrc ~/.zshrc
 ln -s ~/.dotfiles/vim/vimrc ~/.vimrc
 ln -s ~/.dotfiles/tmux/tmux.conf ~/.tmux.conf
 
+ln -s ~/.dotfiles/.Xdefaults ~/.Xdefaults
+ln -s ~/.dotfiles/.gitconfig ~/.gitconfig
 
