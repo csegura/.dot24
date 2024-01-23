@@ -28,3 +28,18 @@ precmd_functions+=(zle-keymap-select)
 zle -N zle-keymap-select
 echo -ne "\e[2 q"
 
+# Read man pages with VIM
+function vman() { 
+  man $* | col -b | vim -c 'set ft=man nomod nolist' -; 
+}
+
+# Git diff with batcat
+function gdiff() {
+   git diff --name-only --relative --diff-filter=d $* | xargs batcat --diff
+}
+# Bat Tail 
+function btail() {
+  tail -f $* | batcat --paging=never -l log
+}
+
+
