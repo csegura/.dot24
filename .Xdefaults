@@ -1,0 +1,114 @@
+
+! Use a truetype font and size
+xterm*faceName: Monospace
+xterm*faceSize: 10
+xterm*background: black
+
+! Xft Font Settings 
+Xft.dpi:        96
+Xft.antialias:  true
+Xft.rgba:       rgb
+Xft.hinting:    true
+Xft.hintstyle:  hintfull
+
+! URxvt Fonts 
+URxvt.font:xft:JetBrains Mono :size=14:style=Regular
+URxvt.boldfont:xft:JetBrains Mono :size=14:style=bold
+
+! URxvt extensions
+URxvt.SaveLines: 9000
+URxvt.perl-ext-common: defaults,eval,font-size
+
+! Restore Ctrl+Shift+(c|v) - perl required
+URxvt.keysym.Shift-Control-V: eval:paste_clipboard
+URxvt.keysym.Shift-Control-C: eval:selection_to_clipboard
+
+! Dracula Xresources palette
+! *.foreground: #F8F8F2
+! *.background: #000000 
+! #282A36
+! *.color0:     #000000
+! *.color8:     #4D4D4D
+
+! *.color1:     #FF5555
+! *.color9:     #FF6E67
+! *.color2:     #50FA7B 
+! *.color10:    #5AF78E
+! *.color3:     #F1FA8C
+! *.color11:    #F4F99D
+! *.color4:     #BD93F9
+! *.color12:    #CAA9FA
+! *.color5:     #FF79C6
+! *.color13:    #FF92D0
+! *.color6:     #8BE9FD
+! *.color14:    #9AEDFE
+! *.color7:     #BFBFBF
+! *.color15:    #E6E6E6
+
+#define nord0 #2E3440
+#define nord1 #3B4252
+#define nord2 #434C5E
+#define nord3 #4C566A
+#define nord4 #D8DEE9
+#define nord5 #E5E9F0
+#define nord6 #ECEFF4
+#define nord7 #8FBCBB
+#define nord8 #88C0D0
+#define nord9 #81A1C1
+#define nord10 #5E81AC
+#define nord11 #BF616A
+#define nord12 #D08770
+#define nord13 #EBCB8B
+#define nord14 #A3BE8C
+#define nord15 #B48EAD
+
+*.foreground:   #D8DEE9
+*.background:   #000000
+*.cursorColor:  #d8dee9
+*fading: 15
+*fadeColor: #0F0F0F
+! nord3
+
+*.color0: #2E3440
+*.color8: #3B4252
+*.color1: #bf616a
+*.color9: #BF616A
+*.color2: #a3be8c
+*.color10: #A3BE8C
+*.color3: #EBCB8B
+*.color11: #EBCB8B
+*.color4: #81A1C1
+*.color12: #81A1C1
+*.color5: #B48EAD
+*.color13: #B48EAD
+*.color6: #88C0D0
+*.color14: #8FBCBB
+*.color7: #E5E9F0
+*.color15: #ECEFF4
+
+! Font spacing
+! By default the distance between characters can feel too wide. Its controlled
+! by this entry: 
+URxvt.letterSpace: -1
+
+! Scrollbar style - rxvt (default), plain (most compact), next, or xterm
+URxvt.scrollstyle: plain
+
+! scrollbar - true (default) or false
+URxvt*scrollBar: true
+
+! scrollbar position - left=false (default) or right=true
+URxvt*scrollBar_right: true
+
+URxvt.internalBorder: 3
+
+! transparency - true or false (default)
+! URxvt*transparent: true
+
+! open urls
+URxvt.url-launcher: /usr/bin/firefox -new-tab
+URxvt.underlineURLs: True
+
+! disable text messages
+URxvt.iso14755: false
+URxvt.iso14755_52: false
