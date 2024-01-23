@@ -28,3 +28,5 @@ export FZF_DEFAULT_OPTS="--layout=reverse --info=inline --height=80% --preview '
 
 export FZF_CTRL_T_OPTS="--preview 'batcat -n --color=always {}' --bind '?:toggle-preview' "
 
+export BAT_THEME="Visual Studio Dark+"
+
