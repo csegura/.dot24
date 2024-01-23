@@ -16,9 +16,15 @@ check_package git
 check_package curl wget
 check_package unzip
 
+# Terminal
+check_package tmux
+
 # Network tools
 check_package iproute2      # ip command
 check_package net_tools     # ifconfig
+
+# Other tools
+check_package solaar        # logitech key/mouse dongle
 
 # Fonts
 wget https://download.jetbrains.com/fonts/JetBrainsMono-1.0.0.zip
