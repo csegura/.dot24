@@ -72,13 +72,15 @@
   undo = "reset --soft HEAD^"
   # Show yesterday's commits
   yesterday = "!git log --after=\"2 days ago\" --before=yesterday --author=\"$(git config user.name)\" --oneline --no-decorate --no-merges"
-
+  ia = !git add $(git ls-files --modified --others --exclude-standard | fzf -0 -m --peview 'git diff --color {}')
+  ie = !git ls-files --modified --other --exclude-standard | sort -u | fzf -0 --multi --preview 'git diff --color {}'| xargs -or $EDITOR -O 
+  id = !git ls-files --modified --others --exclude-standard | fzf -0 -m --preview 'git diff --color {}' | xargs -or git diff
+  is = !git show $(git log --pretty=oneline | cut -c1-7 | fzf -m)
 [commit]
   verbose = true
 
 [core]
   excludesfile = ~/.dotfiles/git/ignore.global
-  pager = "batcat --style=plain"
 	whitespace=fix,-indent-with-non-tab,trailing-space,cr-at-eol,tabwidth=2
 
 [diff]
