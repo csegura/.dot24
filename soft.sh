@@ -1,30 +1,71 @@
 #!/bin/bash
 
-# check if a package is installed if not install it
-# Usage: check_package <package_name>
-function check_package() {
-    if [ -z "$(dpkg -l | grep $1)" ]; then
-        echo "Package $1 is not installed"
-        echo "Installing $1"
-        sudo apt-get install $1
-        exit 1
-    fi
-}
+# Basic
+sudo apt install \
+  git \
+  curl \
+  wget \
+  gpg \
+  unzip \
+  bc \
+  tmux  
 
-# Check and install
-check_package git
-check_package curl wget
-check_package unzip
+# Net tools
+sudo apt install \
+  iproute2 \                  # ip
+  net_tools                   # nmtui
 
-# Terminal
-check_package tmux
+# X11
+sudo apt install \
+  xorg \
+  xserver-xorg-core \
+  xserver-xorg-video-intel \  # check video card
+  x11-xserver-utils \         # xset, xrand
+  x11-utils \                 # xkill, xprops, xwinfo
+  xfonts-base \               # fonts
+  rxvt-unicode \              # term
+  xterm           
 
-# Network tools
-check_package iproute2      # ip command
-check_package net_tools     # ifconfig
+# i3 window manager
+sudo apt install \
+  i3-wm \
+  i3-status \
+  i3-lock \
+  dmenu \                     # menu launcher
+  autorandr \                 # monitors setup 
 
-# Other tools
-check_package solaar        # logitech key/mouse dongle
+
+
+# Install Visual Studio Code
+wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg\
+sudo install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg\
+sh -c 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list'\
+rm -f packages.microsoft.gpg
+sudo apt install apt-transport-https
+sudo apt update
+sudo apt install code
+
+# Chrome
+sudo apt install google-chrome
+
+# Chrome Stable
+mkdir tmp
+cd tmp
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+dpkg -i google-chrome-stable_current_amd64.deb
+cd ..
+
+
+# Misc Tools
+sudo apt install \
+  solaar \                    # logitech usb dongle manager 
+
+# Delta diff viewer
+mkdir -p ~/tmp
+cd ~/tmp
+wget https://github.com/dandavison/delta/releases/download/0.16.5/git-delta_0.16.5_amd64.deb
+sudo dpkg -i git-delta_0.16.5_amd64.debb
+
 
 # Fonts
 wget https://download.jetbrains.com/fonts/JetBrainsMono-1.0.0.zip
