@@ -52,7 +52,7 @@ alias ipp="curl -s http://whatismyip.akamai.com/"
 
 # system info
 alias cpu="awk -v OFMT='%5.3g' '\$1 == \"cpu\" { print( \"Used Cpu: \", 100*(\$2+\$4)/(\$2+\$4+\$5),\"%\" ) }' /proc/stat"
-
+alias mem="free | grep Mem | awk '{print(\"Used Mem:\", \$3/\$2 * 100.0,\"%\")}'"
 alias opp="netstat -tulanp"
 
 # misc
