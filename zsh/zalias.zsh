@@ -46,6 +46,9 @@ ifzf-history-widget-accept() {
 zle     -N     fzf-history-widget-accept
 bindkey '^X^R' fzf-history-widget-accept
 
+# Edit files with vim
+alias vf='vim -O $(fzf --multi)'
+
 # network local ips/public ip/open ports
 alias ips="ip addr show |egrep 'inet '| awk '{print $2 \" \" $NF}'" 
 alias ipp="curl -s http://whatismyip.akamai.com/"
