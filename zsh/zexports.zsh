@@ -4,6 +4,7 @@ export LSCOLORS=Gxfxcxdxbxegedabagacad
 export TERM=xterm-256color
 export LESS="--ignore-case --raw-control-chars"
 export PAGER="less"
+export EDITOR="vim"
 
 # fzf
 export FZF_CTRL_T_COMMAND="fdfind \
