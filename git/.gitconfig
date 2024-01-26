@@ -1,0 +1,148 @@
+#vim: ft=gitconfig
+
+[color]
+	branch = auto
+	diff = auto
+	status = auto
+  showbranch = auto
+	ui = true
+
+[color "branch"]
+	current = yellow reverse
+	local = yellow
+	remote = green
+
+[color "diff"]
+	meta = yellow bold
+	frag = magenta bold
+	old = red bold
+	new = green bold
+
+[color "status"]
+	added = yellow
+	changed = cyan
+	untracked = red
+
+[apply]
+	whitespace = nowarn
+
+[branch]
+	autosetuprebase = always
+
+[rerere]
+	enabled = 1
+
+[log]
+  date = short
+  # date = relative
+
+[advice]
+  skippedCherryPicks = false
+
+[alias]
+  # Fuzzy add modified files, optionally via patch
+  addm = "!git ls-files --deleted --modified --other --exclude-standard | fzf -0 -m --preview 'git diff --color=always {-1}' | xargs -r git add"
+  addmp = "!git ls-files --deleted --modified --exclude-standard | fzf -0 -m --preview 'git diff --color=always {-1}' | xargs -r -o git add -p"
+  # Add all changes to last commit
+  append = "commit --all --amend --no-edit"
+  # Fuzzy checkout a branch, showing most recent commit
+  cb = "!git branch --all | grep -v '^[*+]' | awk '{print $1}' | fzf -0 --preview 'git show --color=always {-1}' | sed 's/remotes\\/origin\\///g' | xargs -r git checkout"
+  # Fuzzy apply a stash
+  cs = "!git stash list | fzf -0 --preview 'git show --pretty=oneline --color=always --patch \"$(echo {} | cut -d: -f1)\"' | cut -d: -f1 | xargs -r git stash pop"
+  # Fuzzy (force) delete a branch, showing most recent commit
+  db = "!git branch | grep -v '^[*+]' | awk '{print $1}' | fzf -0 --multi --preview 'git show --color=always {-1}' | xargs -r git branch --delete"
+  Db = "!git branch | grep -v '^[*+]' | awk '{print $1}' | fzf -0 --multi --preview 'git show --color=always {-1}' | xargs -r git branch --delete --force"
+  # Delete merged branches
+  dm = "!git fetch && git branch --merged | grep -v '^[*+]' | xargs -r git branch --delete --force"
+  # Fuzzy delete a stash
+  ds = "!git stash list | fzf -0 --preview 'git show --pretty=oneline --color=always --patch \"$(echo {} | cut -d: -f1)\"' | cut -d: -f1 | xargs -r git stash drop"
+  # Select modified files to edit
+  edit = "!git ls-files --modified --other --exclude-standard | sort -u | fzf -0 --multi --preview 'git diff --color {}' | xargs -r $EDITOR -p"
+  # Create a fixup commit to the selected commit
+  fixup = "!git log --oneline --no-decorate --no-merges | fzf -0 --preview 'git show --color=always --format=oneline {1}' | awk '{print $1}' | xargs -r git commit --fixup"
+  # Fetch and rebase
+  frb = "!git fetch --prune && git rebase --autostash \"$(git remote show origin | sed -n '/HEAD branch/s/.*: //p')\""
+  # checkout origin/main
+  main = "checkout origin/main"
+  # Fuzzy reset staged files
+  resetm = "!git diff --name-only --cached | fzf -0 -m --preview 'git diff --cached --color=always {-1}' | xargs -r git reset"
+  # Show today's commits
+  today = "!git log --after=yesterday --author=\"$(git config user.name)\" --oneline --no-decorate --no-merges"
+  # Undo last commit, but keeping changes
+  undo = "reset --soft HEAD^"
+  # Show yesterday's commits
+  yesterday = "!git log --after=\"2 days ago\" --before=yesterday --author=\"$(git config user.name)\" --oneline --no-decorate --no-merges"
+
+[commit]
+  verbose = true
+
+[core]
+  excludesfile = ~/.dotfiles/git/ignore.global
+  pager = "batcat --style=plain"
+	whitespace=fix,-indent-with-non-tab,trailing-space,cr-at-eol,tabwidth=2
+
+[diff]
+  algorithm = minimal
+
+[fetch]
+  prune = true
+
+[help]
+  autocorrect = 1
+
+[init]
+  defaultBranch = main
+
+[merge]
+  autostash = true
+  conflictStyle = diff3
+  prompt = false
+
+[pull]
+  rebase = true
+
+[push]
+  default = current
+  # Automatically set upstream when pushing (basically `-u` by default)
+  autoSetupRemote = true
+
+[rebase]
+  autosquash = 1
+
+[status]
+  # Show files within an untracked directory
+  showUntrackedFiles = all
+
+[include]
+  # Local modifications / auth
+  path = ~/.dotfiles/git/gitconfig.local
+
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+
+#[alias]
+#	st = status -sb
+#	ci = commit
+#	co = checkout
+#  graph = log --graph --oneline --decorate=short --branches='*'
+#	br = branch
+#	df = diff --color-words='[^[:space:]]'
+#	sh = show --color-words='[^[:space:]]'
+#	lg = log -p
+#  serve = !git daemon --reuseaddr --verbose --base-path=. --export-all ./.git
+#  pend = cherry -v origin/master
+
+#	prefab = cherry -v origin/fabrication
+[format]
+   pretty = '%C(yellow)%h%Creset %C(magenta)%cd%Creset %d %s'
+
+[github]
+#	user = 
+[gitjour]
+#	prefix = 
+
+#[push]
+#	default = simple
