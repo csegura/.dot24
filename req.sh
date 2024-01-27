@@ -2,23 +2,22 @@
 
 # check if a package is installed if not install it
 # Usage: check_package <package_name_x86> <package_name_arm>
-function check_package() {
-  if [ -z "$2" ]; then
-      $2=$1
+function check_package () {
+  local PKG=$1
+  if [[ $ARCH = "arm" && ! -z $2 ]]; then
+      PKG=$2
   fi
-  if [[ $ARCH == "arm" ]]; then
-      $1=$2
-  fi
-  if [ -z "$(dpkg -l | grep $1)" ]; then
-      echo "Package $1 is not installed"
-      echo "Installing $1"
-      sudo apt-get install $1
+  echo "Check $PKG ..."
+  if [ -z "$(dpkg -s $PKG)" ]; then
+      echo "Package $PKG is not installed"
+      echo "Installing $PKG ($ARCH)"
+      sudo apt-get install $PKG
   else
-      echo "Skip $1"
+      echo "Already installed $PKG ($ARCH)"
   fi
 }
 
-function set_arch() {
+function set_arch () {
   ARCH=$(uname -m)
   case $ARCH in
     armv5*) ARCH="arm";;
