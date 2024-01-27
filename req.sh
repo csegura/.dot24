@@ -44,6 +44,7 @@ check_package fd-find                   # better find (use with fuzzy find)
 check_package fzf                       # fuzzy find
 check_package vim                       # vim
 check_package batcat bat                # better cat (used with fzf)
+check_package wget
 
 # Link config files
 ln -s -f ~/.dotfiles/zsh/zshrc ~/.zshrc
@@ -53,4 +54,5 @@ ln -s -f ~/.dotfiles/tmux/tmux.conf ~/.tmux.conf
 ln -s -f ~/.dotfiles/.Xdefaults ~/.Xdefaults
 ln -s -f ~/.dotfiles/git/.gitconfig ~/.gitconfig
 
+# change shell
 sudo chsh --shell /bin/zsh $(whoami)
