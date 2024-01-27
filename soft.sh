@@ -7,6 +7,7 @@ sudo apt install \
   wget \
   gpg \
   unzip \
+  psmisc \
   bc \
   tmux  
 
