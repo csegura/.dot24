@@ -5,6 +5,7 @@ export TERM=xterm-256color
 export LESS="--ignore-case --raw-control-chars"
 export PAGER="less"
 export EDITOR="vim"
+export ZDOTDIR=~/.dotfiles/zsh
 
 # fzf
 export FZF_CTRL_T_COMMAND="fdfind \
