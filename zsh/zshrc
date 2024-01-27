@@ -1,10 +1,10 @@
 
-source ~/.dotfiles/zsh/zfunctions.zsh
-source ~/.dotfiles/zsh/zalias.zsh
-source ~/.dotfiles/zsh/zcompletion.zsh
-source ~/.dotfiles/zsh/zvcs.zsh
-source ~/.dotfiles/zsh/zexports.zsh
-source ~/.dotfiles/zsh/zbindings.zsh
+source ${HOME}/.dotfiles/zsh/zfunctions.zsh
+source ${HOME}/.dotfiles/zsh/zalias.zsh
+source ${HOME}/.dotfiles/zsh/zcompletion.zsh
+source ${HOME}/.dotfiles/zsh/zvcs.zsh
+source ${HOME}/.dotfiles/zsh/zexports.zsh
+source ${HOME}/.dotfiles/zsh/zbindings.zsh
 
 # Enable fzf
 load_file /usr/share/doc/fzf/examples/completion.zsh
