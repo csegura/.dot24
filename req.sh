@@ -6,7 +6,7 @@ function check_package() {
   if [ -z "$2" ]; then
       $2=$1
   fi
-  if [ ARCH = "arm" ]; then
+  if [[ $ARCH == "arm" ]]; then
       $1=$2
   fi
   if [ -z "$(dpkg -l | grep $1)" ]; then
@@ -29,7 +29,7 @@ function set_arch() {
     x86_64) ARCH="amd64";;
     i686) ARCH="386";;
     i386) ARCH="386";;
-  esaci
+  esac
 }
 set_arch
 echo $ARCH
@@ -43,13 +43,15 @@ check_package zsh-autosuggestions       # zsh autosuggestions
 check_package zsh-syntax-highlighting   # zsh syntax-highlighting command line
 check_package fd-find                   # better find (use with fuzzy find)
 check_package fzf                       # fuzzy find
+check_package vim                       # vim
 check_package batcat bat                # better cat (used with fzf)
 
 # Link config files
-ln -s ~/.dotfiles/zsh/zshrc ~/.zshrc
-ln -s ~/.dotfiles/vim/vimrc ~/.vimrc
-ln -s ~/.dotfiles/tmux/tmux.conf ~/.tmux.conf
+ln -s -f ~/.dotfiles/zsh/zshrc ~/.zshrc
+ln -s -f ~/.dotfiles/vim/vimrc ~/.vimrc
+ln -s -f ~/.dotfiles/tmux/tmux.conf ~/.tmux.conf
 
-ln -s ~/.dotfiles/.Xdefaults ~/.Xdefaults
-ln -s ~/.dotfiles/git/.gitconfig ~/.gitconfig
+ln -s -f ~/.dotfiles/.Xdefaults ~/.Xdefaults
+ln -s -f ~/.dotfiles/git/.gitconfig ~/.gitconfig
 
+sudo chsh --shell /bin/zsh $(whoami)
