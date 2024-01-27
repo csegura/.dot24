@@ -6,7 +6,7 @@ function check_package() {
   if [ -z "$2" ]; then
       $2=$1
   fi
-  if [ arch = "arm" ]; then
+  if [ ARCH = "arm" ]; then
       $1=$2
   fi
   if [ -z "$(dpkg -l | grep $1)" ]; then
@@ -19,14 +19,20 @@ function check_package() {
 }
 
 function set_arch() {
-  if (uname -m | grep -q x86_64); then
-      arch = "x86_64"
-  elif (uname -m | grep -q arm); then
-      arch = "arm"
-  fi
+  ARCH=$(uname -m)
+  case $ARCH in
+    armv5*) ARCH="arm";;
+    armv6*) ARCH="arm";;
+    armv7*) ARCH="arm";;
+    aarch64) ARCH="arm";;
+    x86) ARCH="386";;
+    x86_64) ARCH="amd64";;
+    i686) ARCH="386";;
+    i386) ARCH="386";;
+  esaci
 }
-
 set_arch
+echo $ARCH
 
 mkdir -p ~/.cache/zsh
 mkdir -p ~/.cache/vim
