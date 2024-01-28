@@ -14,6 +14,9 @@ load_file /usr/share/doc/fzf/examples/key-bindings.zsh
 load_file /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 load_file /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
+# Zoxide (aka z)
+eval "$(zoxide init zsh)"
+
 # Navigation
 setopt AUTO_CD              # Go to folder path without using cd.
 setopt AUTO_PUSHD           # Push the old directory onto the stack on cd.

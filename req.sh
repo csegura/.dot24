@@ -45,6 +45,7 @@ check_package fzf                       # fuzzy find
 check_package vim                       # vim
 check_package batcat bat                # better cat (used with fzf)
 check_package wget
+check_package zoxide                    # z jumper
 
 # Link config files
 ln -s -f ~/.dotfiles/zsh/zshrc ~/.zshrc
