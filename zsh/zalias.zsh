@@ -22,7 +22,7 @@ alias openports='lsof -iTCP -sTCP:LISTEN -P'
 alias fd='fdfind'
 # batcat
 alias bat='batcat --color=always --style=numbers'
-alias -g -- -h='-h 2>&1 | batcat --language=help --style=plain'
+#alias -g -- -h='-h 2>&1 | batcat --language=help --style=plain'
 alias -g -- --help='--help 2>&1 | batcat --language=help --style=plain'
 
 # History grep
