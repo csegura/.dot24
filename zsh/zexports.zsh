@@ -7,6 +7,10 @@ export PAGER="less"
 export EDITOR="vim"
 export ZDOTDIR=~/.dotfiles/zsh
 
+# options
+export GREP_OPTIONS="--color=always"
+export GREP_COLORS='ms=01;34:mc=01;34:sl=:cx=:fn=35:ln=32:bn=32:se=36'
+
 # fzf
 export FZF_CTRL_T_COMMAND="fdfind \
 --strip-cwd-prefix \
