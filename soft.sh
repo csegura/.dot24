@@ -9,6 +9,7 @@ sudo apt install \
   unzip \
   psmisc \
   bc \
+  jq \                        # json-processor
   tmux  
 
 # Net tools
