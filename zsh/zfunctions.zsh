@@ -42,4 +42,9 @@ function btail() {
   tail -f $* | batcat --paging=never -l log
 }
 
+# Partition mount
+function pmount() { 
+  sudo mount -o loop,offset=$(($(sudo fdisk -lu "$1" | sed -n '/^Device|Dispositiv/,/^$/p' | tail -n+2 | fzf | sed -E -e 's/[[:blank:]]+/ /g' | cut -d' ' -f2- | sed 's@^[^0-9]*\([0-9]\+\).*@\1@') * 512)) "$1" "$2"; 
+}
+
 
