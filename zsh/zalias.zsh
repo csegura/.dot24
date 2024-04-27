@@ -25,6 +25,9 @@ alias bat='batcat --color=always --style=numbers'
 #alias -g -- -h='-h 2>&1 | batcat --language=help --style=plain'
 alias -g -- --help='--help 2>&1 | batcat --language=help --style=plain'
 
+# Force tmux to use 256 colors
+alias tmux='TERM=screen-256color-bce tmux'
+
 # History grep
 alias hg='history | grep'
 

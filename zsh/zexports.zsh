@@ -2,10 +2,12 @@
 export CLICOLOR=1
 export LSCOLORS=Gxfxcxdxbxegedabagacad
 export TERM=xterm-256color
+export TERM=screen-256color
 export LESS="--ignore-case --raw-control-chars"
 export PAGER="less"
 export EDITOR="vim"
 export ZDOTDIR=~/.dotfiles/zsh
+export SHELL=/usr/bin/zsh
 
 # options
 export GREP_OPTIONS="--color=always"
