@@ -18,6 +18,9 @@ export KEYTIMEOUT=1
 [[ -n "${key[CRTLL]}"     ]] && bindkey -- "${key[CRTLL]}"      backward-word
 [[ -n "${key[CRTLR]}"     ]] && bindkey -- "${key[CRTLR]}"      forward-word
 
+bindkey "\e[7~" beginning-of-line
+bindkey "\e[8~" end-of-line
+
 # required by syntax hightlighting
 zle -N backwards-delete-part
 
