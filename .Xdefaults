@@ -12,8 +12,8 @@ Xft.hinting:    true
 Xft.hintstyle:  hintfull
 
 ! URxvt Fonts 
-URxvt.font:xft:JetBrains Mono :size=14:style=Regular
-URxvt.boldfont:xft:JetBrains Mono :size=14:style=bold
+URxvt.font:xft: JetBrains Mono :size=14:style=Regular
+URxvt.boldfont:xft: JetBrains Mono :size=14:style=bold
 
 ! URxvt extensions
 URxvt.SaveLines: 9000

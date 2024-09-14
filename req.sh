@@ -31,6 +31,7 @@ function set_arch () {
   esac
 }
 set_arch
+echo $(uname-m)
 echo $ARCH
 
 mkdir -p ~/.cache/zsh
