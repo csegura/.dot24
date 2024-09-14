@@ -79,6 +79,10 @@ Shift +
 Shift -
 ```
 
+## Utils 24/09 (Useful scripts)
+
+monitor.sh  - laptopon laptopoff external all
+
 ## i3wm
 
 # Resize
@@ -419,6 +423,7 @@ i                   -   horizontal split
 s                   -   vertical split
 CTRL-w + <-|->      -  (left or right) to navigate
 ```
+
 ### PERMISSION OVERRIDE ###
 ```
 :w !sudo tee %            -    Allows to override the permission of the written file
