@@ -53,3 +53,6 @@ setopt BANG_HIST                 # Treat '!' specially
 # show colors
 # for code in {000..255}; do print -P -- "$code: %F{$code}Color%f"; done
 PROMPT="%{%F{green}%}%n%{%f%}@%{%F{blue}%}%m %{%F{yellow}%}%~%{%f%}"'${vcs_info_msg_0_}'"%(?.%{%F{green}%}%#%{%f%}.%{%F{red}%}%#%{%f%}) %{%f%}" 
+
+# load custom .dircolors
+eval "$(dircolors ./.dotfiles/misc/.dircolors )"
