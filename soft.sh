@@ -33,15 +33,16 @@ sudo apt install \
   i3-wm \
   i3-status \
   i3-lock \
+  brightnessctl \             # ctrl bright
   dmenu \                     # menu launcher
   autorandr \                 # monitors setup 
 
 
 
 # Install Visual Studio Code
-wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg\
-sudo install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg\
-sh -c 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list'\
+wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg \
+sudo install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg \
+sh -c 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list' \
 rm -f packages.microsoft.gpg
 sudo apt install apt-transport-https
 sudo apt update
@@ -73,3 +74,7 @@ sudo dpkg -i git-delta_0.16.5_amd64.debb
 wget https://download.jetbrains.com/fonts/JetBrainsMono-1.0.0.zip
 unzip JetBrainsMono-1.0.0.zip
 sudo mv JetBrainsMono-*.ttf /usr/share/fonts/
+
+# Fonts awesome - i3status
+sudo apt install fonts-font-awesome
+
