@@ -68,3 +68,5 @@ alias wiki='dig +short txt $1.wp.dg.cx'
 alias gs="git status -sb"
 alias gl='git log --date=short --format="%C(green)%C(bold)%cd %C(auto)%h%d %s (%an)" --graph --color=always'
 
+# colors
+alias showcolors='for x in {0..8}; do for i in {30..37}; do for a in {40..47}; do echo -ne "\e[$x;$i;$a""m\\\e[$x;$i;$a""m\e[0;37;40m "; done; echo; done; done; echo ""'
