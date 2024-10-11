@@ -55,4 +55,6 @@ setopt BANG_HIST                 # Treat '!' specially
 PROMPT="%{%F{green}%}%n%{%f%}@%{%F{blue}%}%m %{%F{yellow}%}%~%{%f%}"'${vcs_info_msg_0_}'"%(?.%{%F{green}%}%#%{%f%}.%{%F{red}%}%#%{%f%}) %{%f%}" 
 
 # load custom .dircolors
-eval "$(dircolors ./.dotfiles/misc/.dircolors )"
+eval "$(dircolors ~/.dotfiles/misc/.dircolors )"
+
+export PATH="$PATH:/home/romheat/.local/bin"
