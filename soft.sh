@@ -78,3 +78,6 @@ sudo mv JetBrainsMono-*.ttf /usr/share/fonts/
 # Fonts awesome - i3status
 sudo apt install fonts-font-awesome
 
+# Screen capture
+sudo apt install flameshot
+
