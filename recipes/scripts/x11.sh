@@ -11,10 +11,10 @@
 sudo apt install \
   xorg \
   xserver-xorg-core \
-  xserver-xorg-video-intel \  
-  x11-xserver-utils \         
-  x11-utils \                 
-  xfonts-base \               
-  rxvt-unicode \              
+  xserver-xorg-video-intel \
+  x11-xserver-utils \
+  x11-utils \
+  xfonts-base \
+  rxvt-unicode \
   xterm           
 
