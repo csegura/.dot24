@@ -1,4 +1,4 @@
-autoload -U compinit && compinit                                                                                       
+autoload -U compinit; compinit                                                                                       
 zmodload -i zsh/complist
 
 setopt ALWAYS_TO_END
@@ -44,6 +44,9 @@ zstyle ':completion:*' verbose yes
 #zstyle ':completion:*:warnings' format 'No matches for: %d'
 #zstyle ':completion:*:corrections' format '%B%d (errors: %e)%b'
 #zstyle ':completion:*' group-name ''
+
+# all pids
+zstyle ':completion:*:processes' command 'ps -fo pid,user,%cpu,%mem,stat,tty,command'
  
 # ignore completion functions (until the _ignored completer)
 zstyle ':completion:*:functions' ignored-patterns '_*'
