@@ -30,7 +30,7 @@ bindkey "^H" 	      backward-delete-char  # C-H: Backspace
 bindkey "^[[3^"     delete-word  # urxvt: C-delete
 bindkey "^[[3"      delete-word  # urxvt: Alt-delete
 bindkey '^U'        backward-kill-line
-
+bindkey '^K'        kill-line
 # Ctrl -> Ctrl <-
 # others
 bindkey "^F" 	      forward-word
