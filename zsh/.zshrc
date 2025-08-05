@@ -57,4 +57,8 @@ PROMPT="%{%F{green}%}%n%{%f%}@%{%F{blue}%}%m %{%F{yellow}%}%~%{%f%}"'${vcs_info_
 # load custom .dircolors
 eval "$(dircolors ~/.dotfiles/misc/.dircolors )"
 
-export PATH="$PATH:/home/romheat/.local/bin"
+export PATH="$PATH:/usr/sbin:/home/romheat/.local/bin"
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
