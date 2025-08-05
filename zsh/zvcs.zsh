@@ -37,13 +37,21 @@ if [[ $ZSH_VERSION == 4.3.<11->* || $ZSH_VERSION == 4.<4->* || $ZSH_VERSION == <
     local modified=$(echo "$gitstatus" | grep "^ M" |  wc -l)
     local staged=$(echo "$gitstatus" | grep "^M" |  wc -l)
     local tocommit=$(echo "$gitstatus" | grep "^MM" |  wc -l)
-    local outgoing=$(git rev-list remotes/origin/main.. 2>/dev/null | wc -l)
-    local stashed=$(git rev-parse --verify refs/stash &>/dev/null ; echo $?)
-
-    local gitdir="$(git rev-parse --git-dir 2>/dev/null)"
-    local branch="$(cat ${gitdir}/HEAD 2>/dev/null)"
-    branch=${branch##*/heads/}
-    local pulls="$(git log ${branch}..origin/${branch} --oneline | wc -l)"
+    local outgoing=0
+    local pulls=0
+    local branch=""
+    local stashed=0
+    if [[ -n $(git remote) ]]; then
+      outgoing=$(git rev-list origin/main..HEAD 2>/dev/null | wc -l)
+      stashed=$(git rev-parse --verify refs/stash &>/dev/null ; echo $?)
+      gitdir="$(git rev-parse --git-dir 2>/dev/null)"
+      branch="$(cat ${gitdir}/HEAD 2>/dev/null)"
+      branch=${branch##*/heads/}
+      pulls="$(git log ${branch}..origin/${branch} --oneline | wc -l)"
+    else
+      # if no remote, we assume no outgoing commits
+    fi
+    # local outgoing=$(git rev-list remotes/origin/main.. 2>/dev/null | wc -l)
 
     # print
     if [[ "$untrack" -gt 0 ]];  then
