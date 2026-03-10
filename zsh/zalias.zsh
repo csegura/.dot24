@@ -38,6 +38,7 @@ alias -g -- --help='--help 2>&1 | batcat --language=help --style=plain'
 alias tmux='TERM=screen-256color-bce tmux'
 
 # History grep
+alias grep='grep --color=always'
 alias hg='history | grep'
 
 # alias for navigation
