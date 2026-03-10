@@ -1,22 +1,31 @@
+eval "$(rgrc --aliases)"
+
+if (( $+commands[rgrc] )); then
+    # Function to prefix commands with rgrc
+    f_fc() { rgrc "$@"; }
+else
+    # Function that does nothing but run the command normally
+    f_fc() { "$@"; }
+fi
 
 # The following lines were added by compinstall
 alias reload="source ~/.zshrc"
 
-alias lh='ls -d .* --color' # show hidden files/directories only
-alias lsd='ls -aFhlG --color'
-alias l='ls -al --color'
-alias ls='ls -Fh --color' # Colorize output, add file type indicator, and put sizes in human readable format
-alias ll='ls -GFhl --color' # Same as above, but in long listing format
+alias lh='f_fc ls -d .* --color' # show hidden files/directories only
+alias lsd='f_fc ls -aFhlG --color'
+alias l='f_fc ls -al --color'
+alias ls='f_fc ls -Fh --color' # Colorize output, add file type indicator, and put sizes in human readable format
+alias ll='f_fc ls -GFhl --color' # Same as above, but in long listing format
 # modified and new
-alias ltd='ls *(m0)' # files & directories modified in last day
-alias lt='ls *(.m0)' # files (no directories) modified in last day
-alias lnew='ls *(.om[1,3])' # list three newest
+alias ltd='f_fc ls *(m0)' # files & directories modified in last day
+alias lt='f_fc ls *(.m0)' # files (no directories) modified in last day
+alias lnew='f_fc ls *(.om[1,3])' # list three newest
 
 # Information
 # heavy files
-alias hf='du -cks * | sort -rn | head -15' 
+alias hf='f_fc du -cks * | sort -rn | head -15' 
 # open ports
-alias openports='lsof -iTCP -sTCP:LISTEN -P'
+alias openports='f_fc lsof -iTCP -sTCP:LISTEN -P'
 
 # fdfind
 alias fd='fdfind'
@@ -39,7 +48,7 @@ for index ({1..9}) alias "$index"="cd +${index}"; unset index
 alias rm='rm -i'
 alias mv='mv -i'
 alias cp='cp -i'
-alias df='df -h'
+alias df='f_fc df -h'
 
 # fzf
 ifzf-history-widget-accept() {
@@ -70,3 +79,7 @@ alias gl='git log --date=short --format="%C(green)%C(bold)%cd %C(auto)%h%d %s (%
 
 # colors
 alias showcolors='for x in {0..8}; do for i in {30..37}; do for a in {40..47}; do echo -ne "\e[$x;$i;$a""m\\\e[$x;$i;$a""m\e[0;37;40m "; done; echo; done; done; echo ""'
+
+# wsl
+alias o="cmd.exe /c start"
+

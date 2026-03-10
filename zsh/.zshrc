@@ -62,3 +62,26 @@ export PATH="$PATH:/usr/sbin:/home/romheat/.local/bin"
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+if is_wsl; then
+  # ensure sudo apt install -y wslu
+  if ! command -v wslview >/dev/null 2>&1; then
+    echo "wslu not found."
+  fi
+  export DISPLAY=:0
+  export BROWSER=/usr/bin/wslview
+fi
+
+# bun completions
+[ -s "/home/romheat/.bun/_bun" ] && source "/home/romheat/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+alias claude-mem='/home/romheat/.bun/bin/bun "/home/romheat/.claude/plugins/marketplaces/thedotmack/plugin/scripts/worker-service.cjs"'
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+

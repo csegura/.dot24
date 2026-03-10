@@ -65,8 +65,8 @@ nnoremap <C-l> <C-w>l
 " Move line(s) up or down via C-j and C-k respectively
 " -------------------------------------------------------------------
 " Normal mode
-nnoremap <C-j> :m .+1<CR>==
-nnoremap <C-k> :m .-2<CR>==
+nnoremap <A-Up> :m .-2<CR>==
+nnoremap <A-Down> :m .+1<CR>==
 
 " Insert mode
 inoremap <C-j> <ESC>:m .+1<CR>==gi

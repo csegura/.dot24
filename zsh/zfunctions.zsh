@@ -59,3 +59,255 @@ function precmd() {
   fi
 }
 
+# killport 
+killport() {
+  if [ -z "$1" ]; then
+    kport 
+  else
+    kill -9 $(lsof -ti:$1)
+  fi
+}
+
+
+kport() {
+  local port_filter=""
+  
+  # If an argument is provided, create the filter string
+  if [ -n "$1" ]; then
+    port_filter="sport = :$1"
+  fi
+
+  # Run ss with the optional filter
+  sudo ss -lptn $port_filter | \
+    fzf --ansi --header-lines=1 --prompt="KILL PROCESS: " \
+    --preview "echo {} | grep -oP 'pid=\K[0-9]+' | xargs ps -fp" \
+    --preview-window=bottom:3:wrap | \
+    grep -oP 'pid=\K[0-9]+' | xargs -r sudo kill -9
+}
+
+fkill() {
+  local selected_pid
+  selected_pid=$(ps -ef | fzf --ansi --header="Select a process to kill" --prompt="Kill PID: " --preview="echo {} | awk '{print \$2}' | xargs ps -fp" --preview-window=bottom:3:wrap | awk '{print $2}')
+  
+  if [ -n "$selected_pid" ]; then
+    sudo kill -9 "$selected_pid"
+    echo "Killed process with PID: $selected_pid"
+  else
+    echo "No process selected."
+  fi
+}
+
+
+function man() {
+  local MAN_BIN="/usr/bin/man"
+
+  # If an argument is provided (e.g., man ls), run it normally
+  if [[ -n "$1" ]]; then
+    $MAN_BIN "$@"
+    return $?
+  fi
+
+  # If no argument, open the fuzzy finder
+  # 1. 'man -k .' lists all available pages
+  # 2. {1} is the command name, {2} is the section (e.g., 1, 8)
+  # 3. We strip the parentheses from {2} for the preview
+  $MAN_BIN -k . | fzf \
+    --reverse \
+    --prompt="Manuals > " \
+    --preview="echo {1} {2} | tr -d '()' | xargs $MAN_BIN | col -bx | batcat -l man -p --color always" \
+    --preview-window="70%:wrap" \
+    --bind="ctrl-p:toggle-preview,pgdn:preview-page-down,pgup:preview-page-up" \
+    | awk '{print $1, $2}' | tr -d '()' | xargs -r $MAN_BIN
+}
+
+# A custom ls that includes octal permissions
+lso() {
+  # If no arguments ($# -eq 0), set the arguments to '*'
+  [[ $# -eq 0 ]] && set -- *
+
+  # Now loop through the arguments (either what you typed or the default '*')
+  for item in "$@"; do
+    local info=$(stat -c "%a %A %U %G %s" "$item" 2>/dev/null)
+    if [ $? -eq 0 ]; then
+      local colored_name=$(ls -d --color=always "$item")
+      printf "%s %s\n" "$info" "$colored_name"
+    fi
+  done | column -t
+}
+
+inspect() {
+  local pid=$1
+  if [ -z "$pid" ]; then
+    echo "Usage: inspect [PID]"
+    return 1
+  fi
+
+  if [[ "$pid" =~ ^[0-9]+$ ]]; then
+    echo "--- Process Information for PID: $pid ---"
+    # Use ps for the header and basics
+    ps -p "$pid" -o user,pcpu,pmem,etime,command | column -t
+    
+    echo -e "\n--- Executable Path ---"
+    readlink "/proc/$pid/exe" || echo "Access Denied"
+    
+    echo -e "\n--- Open Network Connections ---"
+    ss -tp | grep "pid=$pid," || echo "No active connections"
+  else
+    echo "--- Searching for processes matching: '$pid' ---"
+    # The [^]] trick prevents grep from finding itself in the process list
+    ps f -C "$pid" -o pid,user,pcpu,pmem,etime,command | grep --color=always "$pid" || echo "No matching processes found"
+  fi
+}
+
+cz() {
+  local selection
+  
+  # zoxide query -l lists your most frequent directories
+  selection=$(zoxide query -l | fzf \
+    --height=40% \
+    --layout=reverse \
+    --border=rounded \
+    --prompt=$'\e[34mGo To > \e[0m' \
+    --header=$'\e[2m(Zoxide Frequent Dirs)\e[0m' \
+    --color='header:italic,pointer:4,hl:3' \
+    --preview='tree -C -L 1 {} | head -20')
+
+  if [[ -n "$selection" ]]; then
+    cd "$selection" || return
+    # Optional: Print the new path in a nice color
+    echo -e "\e[32m✔\e[0m Moved to: \e[1m$PWD\e[0m"
+  fi
+}
+
+# fzf-based mini file manager
+fm() {
+    local dir="${1:-.}"
+    dir="$(realpath "$dir")"
+
+    while true; do
+        local selection
+        selection=$(
+            { echo ".."; ls -Ap "$dir"; } \
+            | fzf --header="$dir" \
+                  --preview="batcat --style=numbers --color=always --line-range :500 {}" \
+                  --bind='ctrl-q:abort' \
+                  --bind='ctrl-x:become(echo __CD__)' \
+                  --bind='ctrl-e:become(echo __EDIT__{})' \
+                  --prompt='> '
+        )
+
+        [[ -z "$selection" ]] && return
+
+        if [[ "$selection" == "__CD__" ]]; then
+            cd "$dir"
+            return
+        fi
+
+        if [[ "$selection" == __EDIT__* ]]; then
+            local target="$dir/${selection#__EDIT__}"
+            [[ -f "$target" ]] && "${EDITOR:-vim}" "$target" < /dev/tty
+            continue
+        fi
+
+        local target="$dir/$selection"
+        [[ -d "$target" ]] && dir="$(realpath "$target")"
+    done
+}
+
+fm-widget() { fm; zle reset-prompt }
+zle -N fm-widget
+bindkey '^E' fm-widget
+
+lcolors() {
+  for code in {000..255}; do
+    # \e[48;5;${code}m is the ANSI escape for background color
+    # \e[0m resets all formatting
+    printf "\e[48;5;%sm  %3s  \e[0m " "$code" "$code"
+    
+    # Every 8 colors, print a new line
+    if [ $(( (code + 1) % 8 )) -eq 0 ]; then
+      echo ""
+    fi
+  done
+}
+
+# Function to fuzzy-search and run previous SSH/SCP commands
+fssh() {
+  local selected_command
+  
+  # 1. Fetch history
+  # 2. Filter for ssh or scp
+  # 3. Use awk to remove the history line numbers
+  # 4. Use fzf for selection
+  selected_command=$(history -n 1 | grep -E "^(ssh|scp) " | fzf \
+    --height=40% \
+    --layout=reverse \
+    --border=rounded \
+    --no-preview \
+    --prompt=$'\e[36mReconnect > \e[0m' \
+    --header=$'\e[2mSelect a previous SSH or SCP command\e[0m' \
+    --color='header:italic,pointer:6,hl:4')
+
+  # If a command was selected, run it
+  if [[ -n "$selected_command" ]]; then
+    # Print the command so you know what is being executed
+    echo -e "\e[33mRunning:\e[0m $selected_command"
+    eval "$selected_command"
+  fi
+}
+
+
+# Zsh function to detect WSL
+is_wsl() {
+  # Check for 'Microsoft' in /proc/version, typical for WSL 1 and WSL 2
+  if grep -qi microsoft /proc/version; then
+    return 0
+  fi
+  # Alternatively, check uname -r for 'microsoft'
+  if uname -r | grep -qi microsoft; then
+    return 0
+  fi
+  return 1
+}
+
+# Function to find the log file path based on a port number and tail it.
+# Assumes the process's standard error (2>) is redirected to the log file.
+showlog() {
+  # Check if a port number was provided
+  if [ -z "$1" ]; then
+    echo "Usage: showlog <PORT_NUMBER>"
+    return 1
+  fi
+
+  PORT="$1"
+
+  # 1. Find the Process ID (PID) listening on the specified port
+  # Use 'lsof' to find the PID, filter for lines with 'LISTEN', and extract the PID.
+  # Use 'sudo' as 'lsof' often requires it for full access.
+  # The use of `lsof -i :$PORT` will typically show the PID in the second column.
+  PID=$(sudo lsof -i :"$PORT" | awk '/LISTEN/ {print $2}')
+
+  if [ -z "$PID" ]; then
+    echo "Error: No process found listening on port $PORT."
+    return 1
+  fi
+
+  echo "Found process (PID $PID) on port $PORT. Attempting to locate log file..."
+
+  # 2. Locate the log file path using the process's file descriptor 2 (stderr)
+  # The log file is the target of the symbolic link /proc/[PID]/fd/2.
+  # The output of `ls -l` is piped to awk to extract the path after ' -> '.
+  LOG_FILE=$(ls -l /proc/"$PID"/fd/2 2>/dev/null | awk -F ' -> ' '{print $2}')
+
+  if [ -z "$LOG_FILE" ]; then
+    echo "Error: Could not determine log file from file descriptor 2 for PID $PID."
+    echo "This may mean the process's standard error is not redirected to a file."
+    return 1
+  fi
+
+  echo "Log file located: $LOG_FILE"
+  echo "--- Starting tail -f ---"
+  
+  # 3. Execute tail -f on the located file
+  tail -f "$LOG_FILE"
+}

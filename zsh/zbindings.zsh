@@ -1,6 +1,6 @@
 # Keyboard vi-mode
 bindkey -v
-export KEYTIMEOUT=1
+export KEYTIMEOUT=10
 
 # setup key accordingly
 [[ -n "${key[Home]}"      ]] && bindkey -- "${key[Home]}"       beginning-of-line
@@ -26,7 +26,7 @@ zle -N backwards-delete-part
 
 # Improve delete movements
 bindkey "^[^H" 	    backwards-delete-part  # urxvt: Alt+BackSpace
-bindkey "^H" 	      backward-delete-char  # C-H: Backspace
+bindkey "^H" 	    backward-delete-char  # C-H: Backspace
 bindkey "^[[3^"     delete-word  # urxvt: C-delete
 bindkey "^[[3"      delete-word  # urxvt: Alt-delete
 bindkey '^U'        backward-kill-line

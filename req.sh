@@ -47,6 +47,10 @@ check_package vim                       # vim
 check_package batcat bat                # better cat (used with fzf)
 check_package wget
 check_package zoxide                    # z jumper
+check_package git                       # git
+
+# install rgrc (https://github.com/lazywalker/rgrc)
+sudo curl -sS https://raw.githubusercontent.com/lazywalker/rgrc/master/script/install.sh | sh -s -- --yes
 
 # Link config files
 ln -s -f ~/.dotfiles/zsh/.zshrc ~/.zshrc
