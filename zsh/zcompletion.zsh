@@ -1,6 +1,8 @@
 autoload -U compinit; compinit                                                                                       
 zmodload -i zsh/complist
 
+setopt AUTO_LIST
+setopt AUTO_MENU
 setopt ALWAYS_TO_END
 setopt COMPLETE_IN_WORD
 
