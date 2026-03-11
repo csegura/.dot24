@@ -16,10 +16,10 @@ zle -N sudo-command-line
 # Change cursor shape in vi mode
 zle-keymap-select () {
     if [[ $KEYMAP == vicmd ]]; then
-        # the command mode for vi
-        echo -ne "\e[5 q"
+        # the command mode for vi (steady underline)
+        echo -ne "\e[4 q"
     else
-        # the insert mode for vi
+        # the insert mode for vi (blinking bar)
         echo -ne "\e[2 q"
     fi
 }
@@ -48,14 +48,31 @@ function pmount() {
 }
 
 function preexec() {
+  [[ "$PROMPT_TIMER" != 1 ]] && return
   timer=${timer:-$SECONDS}
 }
 
-function precmd() {
+_timer_precmd() {
+  if [[ "$PROMPT_TIMER" != 1 ]]; then
+    unset timer
+    RPROMPT=""
+    return
+  fi
   if [ $timer ]; then
     timer_show=$(($SECONDS - $timer))
     export RPROMPT="%F{cyan}${timer_show}s %{$reset_color%}"
     unset timer
+  fi
+}
+precmd_functions+=(_timer_precmd)
+
+timer() {
+  if [[ "$PROMPT_TIMER" == 1 ]]; then
+    PROMPT_TIMER=0
+    unset timer
+    RPROMPT=""
+  else
+    PROMPT_TIMER=1
   fi
 }
 
@@ -239,7 +256,7 @@ fssh() {
   # 2. Filter for ssh or scp
   # 3. Use awk to remove the history line numbers
   # 4. Use fzf for selection
-  selected_command=$(history -n 1 | grep -E "^(ssh|scp) " | fzf \
+  selected_command=$(fc -l 1 | sed 's/^[[:space:]]*[0-9]*[[:space:]]*//' | grep -E "^(ssh|scp) " | fzf \
     --height=40% \
     --layout=reverse \
     --border=rounded \
@@ -252,7 +269,7 @@ fssh() {
   if [[ -n "$selected_command" ]]; then
     # Print the command so you know what is being executed
     echo -e "\e[33mRunning:\e[0m $selected_command"
-    eval "$selected_command"
+    ${(z)selected_command}
   fi
 }
 
@@ -310,4 +327,72 @@ showlog() {
   
   # 3. Execute tail -f on the located file
   tail -f "$LOG_FILE"
+}
+
+proj() {
+  local base_dir="${HOME}/prj"
+  local selection
+  selection=$(find "$base_dir" -mindepth 1 -maxdepth 1 -type d | fzf \
+    --height=40% \
+    --layout=reverse \
+    --border=rounded \
+    --prompt=$'\e[34mProject > \e[0m' \
+    --header=$'\e[2m(~/prj)\e[0m' \
+    --color='header:italic,pointer:4,hl:3' \
+    --preview='cd {} && git -c color.status=always status -sb 2>/dev/null; echo ""; ls --color=always')
+
+  if [[ -n "$selection" ]]; then
+    cd "$selection" || return
+    echo -e "\e[32m>\e[0m $(basename "$PWD") \e[2m($PWD)\e[0m"
+  fi
+}
+
+gwt() {
+  local selection
+  selection=$(git worktree list | fzf \
+    --height=40% \
+    --layout=reverse \
+    --border=rounded \
+    --prompt=$'\e[34mWorktree > \e[0m' \
+    --color='header:italic,pointer:4,hl:3' \
+    --preview='cd {1} && git -c color.status=always status -sb 2>/dev/null; echo ""; ls --color=always' \
+    | awk '{print $1}')
+
+  if [[ -n "$selection" ]]; then
+    cd "$selection" || return
+    echo -e "\e[32m>\e[0m $(basename "$PWD") \e[2m($PWD)\e[0m"
+  fi
+}
+
+gwta() {
+  local branch
+  branch=$(git branch -a --format='%(refname:short)' | fzf \
+    --height=40% \
+    --layout=reverse \
+    --border=rounded \
+    --prompt=$'\e[34mBranch > \e[0m' \
+    --header=$'\e[2mSelect branch for worktree\e[0m' \
+    --color='header:italic,pointer:4,hl:3')
+
+  if [[ -n "$branch" ]]; then
+    local name="${branch##*/}"
+    git worktree add "../${name}" "$branch"
+    echo -e "\e[32m>\e[0m Worktree created: ../${name}"
+  fi
+}
+
+gwtd() {
+  local selection
+  selection=$(git worktree list | fzf \
+    --height=40% \
+    --layout=reverse \
+    --border=rounded \
+    --prompt=$'\e[31mRemove Worktree > \e[0m' \
+    --color='header:italic,pointer:1,hl:3' \
+    | awk '{print $1}')
+
+  if [[ -n "$selection" ]]; then
+    git worktree remove "$selection"
+    echo -e "\e[33m>\e[0m Removed worktree: $selection"
+  fi
 }
