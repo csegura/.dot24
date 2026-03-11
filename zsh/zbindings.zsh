@@ -64,3 +64,6 @@ bindkey -M menuselect 'l' vi-forward-char
 # Sudo a command
 bindkey "^[s"  	    sudo-command-line 
 
+to-history() { print -S $BUFFER ; BUFFER= }
+zle -N to-history
+bindkey '^o' to-history

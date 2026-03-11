@@ -210,6 +210,8 @@ fm() {
                   --bind='ctrl-q:abort' \
                   --bind='ctrl-x:become(echo __CD__)' \
                   --bind='ctrl-e:become(echo __EDIT__{})' \
+                  --bind='ctrl-d:change-prompt(Directories> )+reload(find * -type d)' \
+                  --bind='ctrl-f:change-prompt(Files> )+reload(find * -type f)' \
                   --prompt='> '
         )
 
@@ -246,6 +248,14 @@ lcolors() {
       echo ""
     fi
   done
+
+  autoload -U colors && colors
+  for name code in "${(@kv)color}"; do
+      # Filter out formatting like 'bold' to just see colors
+      if [[ $code =~ ^[0-9]+$ ]]; then
+          print -P "%K{$name}  %k %F{$name}$code: $name%f"
+      fi
+  done | sort -n
 }
 
 # Function to fuzzy-search and run previous SSH/SCP commands
@@ -394,5 +404,84 @@ gwtd() {
   if [[ -n "$selection" ]]; then
     git worktree remove "$selection"
     echo -e "\e[33m>\e[0m Removed worktree: $selection"
+  fi
+}
+
+glog() {
+  local hash
+  hash=$(git log --oneline --graph --color=always --decorate | fzf \
+    --no-sort \
+    --height=80% \
+    --border=rounded \
+    --prompt=$'\e[34mLog > \e[0m' \
+    --header=$'\e[2mEnter: copy hash\e[0m' \
+    --preview='git show --color=always $(echo {} | grep -oE "[a-f0-9]{7,}" | head -1)' \
+    --color='header:italic,pointer:4,hl:3' \
+    | grep -oE "[a-f0-9]{7,}" | head -1)
+
+  if [[ -n "$hash" ]]; then
+    echo -n "$hash" | xclip -selection clipboard
+    echo -e "\e[32m>\e[0m Copied $hash"
+  fi
+}
+
+gbr() {
+  local branch
+  branch=$(git branch --sort=-committerdate | sed 's/^[* ]*//' | fzf \
+    --height=40% \
+    --border=rounded \
+    --prompt=$'\e[34mBranch > \e[0m' \
+    --header=$'\e[2mEnter: checkout\e[0m' \
+    --preview='git log --oneline --graph --color=always -20 {}' \
+    --color='header:italic,pointer:4,hl:3')
+
+  if [[ -n "$branch" ]]; then
+    git checkout "$branch"
+  fi
+}
+
+ggrep() {
+  if [[ -z "$1" ]]; then
+    echo "Usage: ggrep <term>"
+    return 1
+  fi
+
+  local hash
+  hash=$(git log --oneline --color=always -S "$1" | fzf \
+    --no-sort \
+    --height=80% \
+    --border=rounded \
+    --prompt=$'\e[34mGrep > \e[0m' \
+    --header=$'\e[2mSearching: '"$1"'\e[0m' \
+    --preview='git show --color=always $(echo {} | grep -oE "[a-f0-9]{7,}" | head -1)' \
+    --color='header:italic,pointer:4,hl:3' \
+    | grep -oE "[a-f0-9]{7,}" | head -1)
+
+  if [[ -n "$hash" ]]; then
+    echo -n "$hash" | xclip -selection clipboard
+    echo -e "\e[32m>\e[0m Copied $hash"
+  fi
+}
+
+gconflict() {
+  local files
+  files=$(git diff --name-only --diff-filter=U)
+
+  if [[ -z "$files" ]]; then
+    echo -e "\e[32m>\e[0m No conflicts"
+    return
+  fi
+
+  local file
+  file=$(echo "$files" | fzf \
+    --height=60% \
+    --border=rounded \
+    --prompt=$'\e[31mConflict > \e[0m' \
+    --header=$'\e[2mEnter: open in vim\e[0m' \
+    --preview='batcat --color=always --highlight-line $(grep -n "^<<<<<<<" {} | head -1 | cut -d: -f1) {}' \
+    --color='header:italic,pointer:1,hl:3')
+
+  if [[ -n "$file" ]]; then
+    vim "+/^<<<<<<<" "$file"
   fi
 }

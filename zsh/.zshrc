@@ -7,8 +7,8 @@ source ${HOME}/.dotfiles/zsh/zexports.zsh
 source ${HOME}/.dotfiles/zsh/zbindings.zsh
 
 # Enable fzf
-load_file /usr/share/doc/fzf/examples/completion.zsh
-load_file /usr/share/doc/fzf/examples/key-bindings.zsh
+load_file ~/.fzf/shell/completion.zsh
+load_file ~/.fzf/shell/key-bindings.zsh
 
 # Basic zsh stuff 
 load_file /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
@@ -47,13 +47,19 @@ setopt BANG_HIST                 # Treat '!' specially
 
 # show colors
 # for code in {000..255}; do print -P -- "$code: %F{$code}Color%f"; done
-PROMPT="%{%F{green}%}%n%{%f%}@%{%F{blue}%}%m %{%F{yellow}%}%~%{%f%}"'${vcs_info_msg_0_}'"%(?.%{%F{green}%}%#%{%f%}.%{%F{red}%}%#%{%f%}) %{%f%}"
+PROMPT=""
+PROMPT+="%F{green}%n%f"            # username
+PROMPT+="@"
+PROMPT+="%F{blue}%m%f "            # hostname
+PROMPT+="%F{yellow}%~%f"           # path
+PROMPT+='${vcs_info_msg_0_}'       # git info
+PROMPT+="%(?.%F{green}.%F{red})%# %f"
 PROMPT_TIMER=${PROMPT_TIMER:-0}
 
 # load custom .dircolors
 eval "$(dircolors ~/.dotfiles/misc/.dircolors )"
 
-export PATH="$PATH:/usr/sbin:/home/romheat/.local/bin"
+export PATH="$HOME/.fzf/bin:$PATH:/usr/sbin:/home/romheat/.local/bin"
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm

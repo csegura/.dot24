@@ -37,12 +37,22 @@ echo $ARCH
 mkdir -p ~/.cache/zsh
 mkdir -p ~/.cache/vim
 
+# fzf.vim plugin (native vim pack)
+mkdir -p ~/.vim/pack/plugins/start
+if [ ! -d ~/.vim/pack/plugins/start/fzf.vim ]; then
+  git clone https://github.com/junegunn/fzf.vim ~/.vim/pack/plugins/start/fzf.vim
+fi
+
 # Check and install
 check_package zsh                       # zsh shell
 check_package zsh-autosuggestions       # zsh autosuggestions
 check_package zsh-syntax-highlighting   # zsh syntax-highlighting command line
 check_package fd-find                   # better find (use with fuzzy find)
-check_package fzf                       # fuzzy find
+# fzf from git (apt version is too old for fzf.vim)
+if [ ! -d ~/.fzf ]; then
+  git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+  ~/.fzf/install --bin
+fi
 check_package vim                       # vim
 check_package batcat bat                # better cat (used with fzf)
 check_package wget

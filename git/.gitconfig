@@ -41,7 +41,7 @@
 
 [alias]
   # Fuzzy add modified files, optionally via patch
-  addm = "!git ls-files --deleted --modified --other --exclude-standard | fzf -0 -m --preview 'git diff --color=always {-1}' | xargs -r git add"
+  addm = "!git status --short | grep -v '^[MADRC]' | fzf -0 -m --ansi --nth 2.. --preview 'git diff --color=always {2}' | awk '{print $NF}' | xargs -r git add"
   addmp = "!git ls-files --deleted --modified --exclude-standard | fzf -0 -m --preview 'git diff --color=always {-1}' | xargs -r -o git add -p"
   # Add all changes to last commit
   append = "commit --all --amend --no-edit"
@@ -72,10 +72,15 @@
   undo = "reset --soft HEAD^"
   # Show yesterday's commits
   yesterday = "!git log --after=\"2 days ago\" --before=yesterday --author=\"$(git config user.name)\" --oneline --no-decorate --no-merges"
-  ia = !git add $(git ls-files --modified --others --exclude-standard | fzf -0 -m --peview 'git diff --color {}')
-  ie = !git ls-files --modified --other --exclude-standard | sort -u | fzf -0 --multi --preview 'git diff --color {}'| xargs -or $EDITOR -O 
+  # Fuzzy edit modified/untracked files
+  ie = !git ls-files --modified --other --exclude-standard | sort -u | fzf -0 --multi --preview 'git diff --color {}'| xargs -or $EDITOR -O
+  # Fuzzy diff modified/untracked files
   id = !git ls-files --modified --others --exclude-standard | fzf -0 -m --preview 'git diff --color {}' | xargs -or git diff
+  # Fuzzy show a commit
   is = !git show $(git log --pretty=oneline | cut -c1-7 | fzf -m)
+  # Graph log with aligned columns
+  lg = log --all --graph --decorate=short --color --pretty=format:'%C(bold 214)%<(7,trunc)%h%C(reset) %C(dim white)%>(12,trunc)%cr%C(reset) %C(auto)%>(15,trunc)%D%C(reset) %C(white)%s%C(reset)'
+
 [commit]
   verbose = true
 
@@ -125,26 +130,6 @@
 	process = git-lfs filter-process
 	required = true
 
-#[alias]
-#	st = status -sb
-#	ci = commit
-#	co = checkout
-#  graph = log --graph --oneline --decorate=short --branches='*'
-#	br = branch
-#	df = diff --color-words='[^[:space:]]'
-#	sh = show --color-words='[^[:space:]]'
-#	lg = log -p
-#  serve = !git daemon --reuseaddr --verbose --base-path=. --export-all ./.git
-#  pend = cherry -v origin/master
-
-#	prefab = cherry -v origin/fabrication
 [format]
    pretty = '%C(yellow)%h%Creset %C(magenta)%cd%Creset %d %s'
 
-[github]
-#	user = 
-[gitjour]
-#	prefix = 
-
-#[push]
-#	default = simple
