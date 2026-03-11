@@ -52,11 +52,10 @@ sudo apt install code
 sudo apt install google-chrome
 
 # Chrome Stable
-mkdir tmp
-cd tmp
-wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-dpkg -i google-chrome-stable_current_amd64.deb
-cd ..
+tmpdir=$(mktemp -d)
+wget -P "$tmpdir" https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+sudo dpkg -i "$tmpdir"/google-chrome-stable_current_amd64.deb
+rm -rf "$tmpdir"
 
 
 # Misc Tools
@@ -67,7 +66,7 @@ sudo apt install \
 mkdir -p ~/tmp
 cd ~/tmp
 wget https://github.com/dandavison/delta/releases/download/0.16.5/git-delta_0.16.5_amd64.deb
-sudo dpkg -i git-delta_0.16.5_amd64.debb
+sudo dpkg -i git-delta_0.16.5_amd64.deb
 
 
 # Fonts
