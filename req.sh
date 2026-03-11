@@ -8,10 +8,10 @@ function check_package () {
       PKG=$2
   fi
   echo "Check $PKG ..."
-  if [ -z "$(dpkg -s $PKG)" ]; then
+  if ! dpkg -l "$PKG" 2>/dev/null | grep -q "^ii"; then
       echo "Package $PKG is not installed"
       echo "Installing $PKG ($ARCH)"
-      sudo apt-get install $PKG
+      sudo apt-get install "$PKG"
   else
       echo "Already installed $PKG ($ARCH)"
   fi
@@ -31,7 +31,7 @@ function set_arch () {
   esac
 }
 set_arch
-echo $(uname-m)
+echo $(uname -m)
 echo $ARCH
 
 mkdir -p ~/.cache/zsh
@@ -50,12 +50,13 @@ check_package zoxide                    # z jumper
 check_package git                       # git
 
 # install rgrc (https://github.com/lazywalker/rgrc)
-sudo curl -sS https://raw.githubusercontent.com/lazywalker/rgrc/master/script/install.sh | sh -s -- --yes
+# NOTE: curl-pipe-sh pattern — review script before running
+curl -sS https://raw.githubusercontent.com/lazywalker/rgrc/master/script/install.sh | sudo sh -s -- --yes
 
 # Link config files
 ln -s -f ~/.dotfiles/zsh/.zshrc ~/.zshrc
 ln -s -f ~/.dotfiles/vim/vimrc ~/.vimrc
-ln -s -f ~/.dotfiles/zsh/zprofile ~/.zprofile
+ln -s -f ~/.dotfiles/zsh/.zprofile ~/.zprofile
 ln -s -f ~/.dotfiles/tmux/tmux.conf ~/.tmux.conf
 
 ln -s -f ~/.dotfiles/.Xdefaults ~/.Xdefaults
