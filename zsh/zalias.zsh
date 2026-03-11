@@ -1,10 +1,7 @@
-eval "$(rgrc --aliases)"
-
 if (( $+commands[rgrc] )); then
-    # Function to prefix commands with rgrc
+    eval "$(rgrc --aliases)"
     f_fc() { rgrc "$@"; }
 else
-    # Function that does nothing but run the command normally
     f_fc() { "$@"; }
 fi
 
@@ -38,7 +35,7 @@ alias -g -- --help='--help 2>&1 | batcat --language=help --style=plain'
 alias tmux='TERM=screen-256color-bce tmux'
 
 # History grep
-alias grep='grep --color=always'
+alias grep='grep --color=auto'
 alias hg='history | grep'
 
 # alias for navigation
@@ -50,14 +47,6 @@ alias rm='rm -i'
 alias mv='mv -i'
 alias cp='cp -i'
 alias df='f_fc df -h'
-
-# fzf
-ifzf-history-widget-accept() {
-  fzf-history-widget
-  zle accept-line
-}
-zle     -N     fzf-history-widget-accept
-bindkey '^X^R' fzf-history-widget-accept
 
 # Edit files with vim
 alias vf='vim -O $(fzf --multi)'
@@ -83,4 +72,19 @@ alias showcolors='for x in {0..8}; do for i in {30..37}; do for a in {40..47}; d
 
 # wsl
 alias o="cmd.exe /c start"
+
+# docker
+alias dk='docker'
+alias dkc='docker compose'
+alias dkps='docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"'
+alias dklog='docker logs -f'
+alias dksh='docker exec -it'
+
+# btop
+alias top='btop'
+
+# dpkg
+alias dpkglist='dpkg --get-selections | grep -v deinstall'
+alias dpkgsearch='dpkg --get-selections | grep -i'  
+alias installed='dpkg -l | grep ^ii'
 
