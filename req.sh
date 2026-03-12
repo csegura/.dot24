@@ -58,6 +58,7 @@ check_package batcat bat                # better cat (used with fzf)
 check_package wget
 check_package zoxide                    # z jumper
 check_package git                       # git
+check_package tmux                      # terminal multiplexer
 
 # install rgrc (https://github.com/lazywalker/rgrc)
 # NOTE: curl-pipe-sh pattern — review script before running

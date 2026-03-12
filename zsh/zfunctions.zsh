@@ -203,39 +203,40 @@ fm() {
 
     while true; do
         local selection
+        local key file
         selection=$(
             { echo ".."; ls -Ap "$dir"; } \
             | fzf --header="$dir" \
-                  --preview="batcat --style=numbers --color=always --line-range :500 {}" \
+                  --preview="batcat --style=numbers --color=always --line-range :500 '$dir/{}'  2>/dev/null" \
+                  --expect='ctrl-e,ctrl-x' \
                   --bind='ctrl-q:abort' \
-                  --bind='ctrl-x:become(echo __CD__)' \
-                  --bind='ctrl-e:become(echo __EDIT__{})' \
                   --bind='ctrl-d:change-prompt(Directories> )+reload(find * -type d)' \
                   --bind='ctrl-f:change-prompt(Files> )+reload(find * -type f)' \
                   --prompt='> '
         )
+        key=$(head -1 <<< "$selection")
+        file=$(tail -1 <<< "$selection")
 
-        [[ -z "$selection" ]] && return
+        [[ -z "$file" ]] && return
 
-        if [[ "$selection" == "__CD__" ]]; then
+        if [[ "$key" == "ctrl-x" ]]; then
             cd "$dir"
             return
         fi
 
-        if [[ "$selection" == __EDIT__* ]]; then
-            local target="$dir/${selection#__EDIT__}"
+        if [[ "$key" == "ctrl-e" ]]; then
+            local target="$dir/$file"
             [[ -f "$target" ]] && "${EDITOR:-vim}" "$target" < /dev/tty
             continue
         fi
 
-        local target="$dir/$selection"
+        local target="$dir/$file"
         [[ -d "$target" ]] && dir="$(realpath "$target")"
     done
 }
 
 fm-widget() { fm; zle reset-prompt }
 zle -N fm-widget
-bindkey '^E' fm-widget
 
 lcolors() {
   for code in {000..255}; do

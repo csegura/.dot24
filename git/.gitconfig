@@ -41,7 +41,7 @@
 
 [alias]
   # Fuzzy add modified files, optionally via patch
-  addm = "!git status --short | grep -v '^[MADRC]' | fzf -0 -m --ansi --nth 2.. --preview 'git diff --color=always {2}' | awk '{print $NF}' | xargs -r git add"
+  ia = "!git status --short | grep -v '^[MADRC]' | fzf -0 -m --ansi --nth 2.. --preview 'git diff --color=always {2}' | awk '{print $NF}' | xargs -r git add"
   addmp = "!git ls-files --deleted --modified --exclude-standard | fzf -0 -m --preview 'git diff --color=always {-1}' | xargs -r -o git add -p"
   # Add all changes to last commit
   append = "commit --all --amend --no-edit"
@@ -77,9 +77,9 @@
   # Fuzzy diff modified/untracked files
   id = !git ls-files --modified --others --exclude-standard | fzf -0 -m --preview 'git diff --color {}' | xargs -or git diff
   # Fuzzy show a commit
-  is = !git show $(git log --pretty=oneline | cut -c1-7 | fzf -m)
-  # Graph log with aligned columns
-  lg = log --all --graph --decorate=short --color --pretty=format:'%C(bold 214)%<(7,trunc)%h%C(reset) %C(dim white)%>(12,trunc)%cr%C(reset) %C(auto)%>(15,trunc)%D%C(reset) %C(white)%s%C(reset)'
+  is = !git show $(git log --pretty=oneline --decorate=short --color | cut -c1-7 | fzf -m)
+  # Graph log in fzf with batcat diff preview
+  lg = "!git log --all --graph --decorate=short --color --pretty=format:'%C(bold 214)%<(7,trunc)%h%C(reset) %C(dim white)%>(12,trunc)%cr%C(reset) %C(auto)%>(15,trunc)%D%C(reset) %C(white)%s%C(reset)' | fzf --ansi --no-sort --reverse --preview 'echo {} | grep -oP \"[a-f0-9]{7,}\" | head -1 | xargs -I% git show --color=always --stat --patch %' --preview-window=right:60%"
 
 [commit]
   verbose = true
@@ -132,4 +132,3 @@
 
 [format]
    pretty = '%C(yellow)%h%Creset %C(magenta)%cd%Creset %d %s'
-

@@ -27,6 +27,7 @@ setopt EXTENDED_GLOB        # Use extended globbing syntax.
 
 unsetopt BEEP               # Disable beeps
 unsetopt CORRECT		 	      # Disable corrector
+setopt MONITOR              # Enable job control
 
 # History
 HISTSIZE=10000
@@ -50,7 +51,7 @@ setopt BANG_HIST                 # Treat '!' specially
 PROMPT=""
 PROMPT+="%F{green}%n%f"            # username
 PROMPT+="@"
-PROMPT+="%F{blue}%m%f "            # hostname
+PROMPT+="%F{cyan}%m%f "            # hostname
 PROMPT+="%F{yellow}%~%f"           # path
 PROMPT+='${vcs_info_msg_0_}'       # git info
 PROMPT+="%(?.%F{green}.%F{red})%# %f"

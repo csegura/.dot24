@@ -11,8 +11,8 @@ precmd_functions+=(vcs_info)
 # Enable git
 zstyle ':vcs_info:*' enable git
 
-zstyle ':vcs_info:git*:*' get-revision true
-zstyle ':vcs_info:git*:*' check-for-changes true
+zstyle ':vcs_info:git*:*' get-revision false
+zstyle ':vcs_info:git*:*' check-for-changes false
 
 zstyle ':vcs_info:git:*' formats " %K{237}%F{11}%b%{%f%%k%} %m"
 zstyle ':vcs_info:git:*' actionformats "(%a) %b %m"
@@ -21,40 +21,35 @@ zstyle ':vcs_info:git:*' actionformats "(%a) %b %m"
 if [[ $ZSH_VERSION == 4.3.<11->* || $ZSH_VERSION == 4.<4->* || $ZSH_VERSION == <5->* ]] ; then
 
   +vi-git_status() {
-    local gitstatus=$(git status --porcelain)
-    local untrack=$(echo "$gitstatus" | grep "^??" |  wc -l)
-    local modified=$(echo "$gitstatus" | grep "^ M" |  wc -l)
-    local staged=$(echo "$gitstatus" | grep "^M" |  wc -l)
-    local tocommit=$(echo "$gitstatus" | grep "^MM" |  wc -l)
-    local outgoing=0
-    local pulls=0
-    local stashed=0
-    if [[ -n $(git remote) ]]; then
-      outgoing=$(git rev-list @{upstream}..HEAD 2>/dev/null | wc -l)
-      stashed=$(git rev-parse --verify refs/stash &>/dev/null ; echo $?)
-      local branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
-      pulls=$(git rev-list HEAD..origin/${branch} --count 2>/dev/null)
+    local -A counts
+    counts=(untrack 0 modified 0 staged 0 tocommit 0)
+
+    eval "$(git status --porcelain 2>/dev/null | awk '
+      /^\?\?/ {u++}
+      /^ M/   {m++}
+      /^M/    {s++}
+      /^MM/   {c++}
+      END { printf "counts[untrack]=%d counts[modified]=%d counts[staged]=%d counts[tocommit]=%d", u+0, m+0, s+0, c+0 }
+    ')"
+
+    local outgoing=0 pulls=0
+
+    git rev-parse --verify refs/stash &>/dev/null && local stashed=0 || local stashed=1
+
+    if git rev-parse --verify @{upstream} &>/dev/null; then
+      local ahead_behind
+      ahead_behind=$(git rev-list --left-right --count @{upstream}...HEAD 2>/dev/null)
+      pulls=${ahead_behind%%$'\t'*}
+      outgoing=${ahead_behind##*$'\t'}
     fi
 
     local indicators=()
-    if [[ "$untrack" -gt 0 ]];  then
-        indicators+=("%F{red}u$untrack%f")
-    fi
-    if [[ "$modified" -gt 0 ]];  then
-        indicators+=("%F{cyan}m$modified%f")
-    fi
-    if [[ "$staged" -gt 0 ]];  then
-        indicators+=("%F{yellow}s$staged%f")
-    fi
-    if [[ "$tocommit" -gt 0 ]];  then
-        indicators+=("%F{magenta}c$tocommit%f")
-    fi
-    if [[ "$outgoing" -gt 0 ]];  then
-        indicators+=("%F{green}↑$outgoing%f")
-    fi
-    if [[ "$pulls" -gt 0 ]];  then
-        indicators+=("%F{red}↓$pulls%f")
-    fi
+    (( counts[untrack]  )) && indicators+=("%F{red}u${counts[untrack]}%f")
+    (( counts[modified] )) && indicators+=("%F{cyan}m${counts[modified]}%f")
+    (( counts[staged]   )) && indicators+=("%F{yellow}s${counts[staged]}%f")
+    (( counts[tocommit] )) && indicators+=("%F{magenta}c${counts[tocommit]}%f")
+    (( outgoing         )) && indicators+=("%F{green}↑${outgoing}%f")
+    (( pulls            )) && indicators+=("%F{red}↓${pulls}%f")
     hook_com[misc]+="${(j: :)indicators}"
   }
 

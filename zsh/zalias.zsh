@@ -62,6 +62,7 @@ alias opp="netstat -tulanp"
 
 # misc
 alias wiki='dig +short txt $1.wp.dg.cx'
+alias stree='pstree -s $$ -l 2>/dev/null | head -1 | sed "s/---/\n/g" | sed "s/(.*//g" | grep -v "^$" | awk '"'"'{printf "%s%s", sep, $0; sep=" → "} END {print ""}'"'"''
 
 # git
 alias gs="git status -sb"
