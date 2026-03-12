@@ -8,8 +8,8 @@
 # i3 window manager
 sudo apt install \
   i3-wm \
-  i3-status \
-  i3-lock \
+  i3status \
+  i3lock \
   brightnessctl \
   dmenu \
   autorandr 

@@ -11,6 +11,6 @@ sudo apt install \
   htop \
   7z \
   bc \
-  jq \                        # json-processor
+  jq \
   tmux  
 
