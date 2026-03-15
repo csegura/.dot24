@@ -60,12 +60,10 @@ export FZF_DEFAULT_OPTS=" \
   --bind '?:toggle-preview' \
   --bind 'ctrl-a:select-all' \
   --bind 'ctrl-y:execute-silent(echo {+} | xclip -selection clipboard)' \
-  --bind 'ctrl-e:execute(echo {+} | xargs -o vim)' \
-  --bind 'ctrl-v:execute(code {+})' \
   --bind 'shift-up:preview-half-page-up' \
   --bind 'shift-down:preview-half-page-down'"
 
-export FZF_CTRL_T_OPTS="--ansi --preview 'batcat -n --color=always {}' --bind '?:toggle-preview' "
+export FZF_CTRL_T_OPTS="--ansi --preview 'batcat -n --color=always {}' --bind '?:toggle-preview' --bind 'ctrl-v:execute(code {+})' --bind 'ctrl-e:execute(echo {+} | xargs -o vim)'"
 export FZF_CTRL_R_OPTS="--no-preview"
 
 export BAT_THEME="Visual Studio Dark+"

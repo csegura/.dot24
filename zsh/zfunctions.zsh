@@ -201,9 +201,8 @@ fm() {
     local dir="${1:-.}"
     dir="$(realpath "$dir")"
 
+    local selection key file
     while true; do
-        local selection
-        local key file
         selection=$(
             { echo ".."; ls -Ap "$dir"; } \
             | fzf --header="$dir" \
