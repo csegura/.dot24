@@ -59,10 +59,19 @@ check_package wget
 check_package zoxide                    # z jumper
 check_package git                       # git
 check_package tmux                      # terminal multiplexer
+check_package curl                      # for install rgrc
+check_package jq                        # json-processor
+check_package unzip                     # for unziping files
+check_package rgrc                      # rusty generic colouriser
 
 # install rgrc (https://github.com/lazywalker/rgrc)
 # NOTE: curl-pipe-sh pattern — review script before running
 curl -sS https://raw.githubusercontent.com/lazywalker/rgrc/master/script/install.sh | sudo sh -s -- --yes
+
+# check if we have /usr/bin/bat
+if [ -f /usr/bin/bat ]; then
+  sudo ln -s /usr/bin/bat /usr/bin/batcat
+fi
 
 # Link config files
 ln -s -f ~/.dotfiles/zsh/.zshrc ~/.zshrc

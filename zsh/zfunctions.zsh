@@ -214,8 +214,8 @@ fm() {
                   --bind='ctrl-f:change-prompt(Files> )+reload(find * -type f)' \
                   --prompt='> '
         )
-        key=$(head -1 <<< "$selection")
-        file=$(tail -1 <<< "$selection")
+        key="${selection%%$'\n'*}"
+        file="${selection##*$'\n'}"
 
         [[ -z "$file" ]] && return
 
