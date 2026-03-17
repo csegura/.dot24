@@ -103,15 +103,14 @@ kport() {
 }
 
 fkill() {
-  local selected_pid
-  selected_pid=$(ps -ef | fzf --ansi --header="Select a process to kill" --prompt="Kill PID: " --preview="echo {} | awk '{print \$2}' | xargs ps -fp" --preview-window=bottom:3:wrap | awk '{print $2}')
-  
-  if [ -n "$selected_pid" ]; then
-    sudo kill -9 "$selected_pid"
-    echo "Killed process with PID: $selected_pid"
-  else
-    echo "No process selected."
-  fi
+  sudo -v || return 1
+  ps -ef | fzf --ansi \
+    --header="ctrl-k: kill | enter: kill & exit" \
+    --prompt="Kill PID: " \
+    --preview="echo {} | awk '{print \$2}' | xargs ps -fp" \
+    --preview-window=bottom:3:wrap \
+    --bind='ctrl-k:execute-silent(echo {} | awk "{print \$2}" | xargs -r sudo kill -9)+reload(ps -ef)' \
+    --bind='enter:execute-silent(echo {} | awk "{print \$2}" | xargs -r sudo kill -9)+abort'
 }
 
 
