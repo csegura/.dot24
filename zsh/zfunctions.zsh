@@ -11,6 +11,7 @@ function sudo-command-line() {
     [[ $BUFFER != sudo\ * ]] && BUFFER="sudo $BUFFER"
     zle end-of-line
 }
+# Bind the function to a key sequence (e.g., Alt+s)
 zle -N sudo-command-line
 
 # Change cursor shape in vi mode
@@ -233,9 +234,11 @@ fm() {
     done
 }
 
+# A wrapper for fm to be used as a zle widget
 fm-widget() { fm; zle reset-prompt }
 zle -N fm-widget
 
+# A function to list all 256 ANSI colors with their codes and names
 lcolors() {
   for code in {000..255}; do
     # \e[48;5;${code}m is the ANSI escape for background color
@@ -356,6 +359,7 @@ proj() {
   fi
 }
 
+# Git worktree management with fzf
 gwt() {
   local selection
   selection=$(git worktree list | fzf \
@@ -373,6 +377,7 @@ gwt() {
   fi
 }
 
+# Git worktree creation and deletion with fzf
 gwta() {
   local branch
   branch=$(git branch -a --format='%(refname:short)' | fzf \
@@ -390,6 +395,7 @@ gwta() {
   fi
 }
 
+# Git worktree removal with fzf
 gwtd() {
   local selection
   selection=$(git worktree list | fzf \
@@ -406,6 +412,7 @@ gwtd() {
   fi
 }
 
+# Git log with fzf and batcat preview
 glog() {
   local hash
   hash=$(git log --oneline --graph --color=always --decorate | fzf \
@@ -424,6 +431,7 @@ glog() {
   fi
 }
 
+# Git branch switcher with fzf and log preview
 gbr() {
   local branch
   branch=$(git branch --sort=-committerdate | sed 's/^[* ]*//' | fzf \
@@ -439,7 +447,7 @@ gbr() {
   fi
 }
 
-ggrep() {
+gggrep() {
   if [[ -z "$1" ]]; then
     echo "Usage: ggrep <term>"
     return 1
@@ -483,4 +491,11 @@ gconflict() {
   if [[ -n "$file" ]]; then
     vim "+/^<<<<<<<" "$file"
   fi
+}
+
+# Docker
+
+# New function for bash entry
+dkb() {
+    docker exec -it "$1" /bin/bash
 }
