@@ -75,6 +75,8 @@ if is_wsl; then
   export BROWSER=/usr/bin/wslview
 fi
 
+export PATH="$HOME/.local/bin:$PATH"
+
 # bun completions
 [ -s "/home/romheat/.bun/_bun" ] && source "/home/romheat/.bun/_bun"
 
@@ -82,5 +84,5 @@ fi
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
-alias claude-mem='/home/romheat/.bun/bin/bun "/home/romheat/.claude/plugins/marketplaces/thedotmack/plugin/scripts/worker-service.cjs"'
+
 
