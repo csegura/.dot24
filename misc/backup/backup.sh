@@ -188,10 +188,13 @@ for entry in "${SOURCES[@]}"; do
     -aHAX
     --info=progress2
     --stats
+    --no-compress          # no CPU waste on fast LAN
+    -W                     # whole-file: skip delta on fast network
     "${EXCLUDES_OPTS[@]}"
     --link-dest="${prev_link}/"
   )
-  [[ -n "${REMOTE:-}" ]] && rsync_opts+=(-e "ssh -i $SSH_KEY")
+  # Fast hardware-accelerated cipher for SSH transport
+  [[ -n "${REMOTE:-}" ]] && rsync_opts+=(-e "ssh -i $SSH_KEY -c aes128-gcm@openssh.com")
   $DRY_RUN && rsync_opts+=(--dry-run)
   $VERBOSE && rsync_opts+=(-v)
 
