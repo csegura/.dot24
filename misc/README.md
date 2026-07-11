@@ -113,3 +113,24 @@ Installs: `zsh`, `zsh-autosuggestions`, `zsh-syntax-highlighting`,
 
 Also: symlinks dotfiles, sets zsh as default shell, scaffolds
 `~/.config/backup/backup.conf` from the example template.
+
+---
+
+### `energy/energy-setup.sh` — Headless server energy saving
+
+Installs and configures TLP for a headless server. Run once on a new machine:
+
+```bash
+sudo ~/.dotfiles/misc/energy/energy-setup.sh
+```
+
+**What it does:**
+- Installs TLP and deploys `tlp-server.conf`
+- CPU governor → `powersave`, turbo boost disabled
+- Disk APM level 128 (spindown allowed), SATA link → `med_power_with_dipm`
+- PCIe ASPM → `powersupersave`
+- Wake-on-LAN disabled (use Tailscale instead)
+- Bluetooth disabled
+- USB autosuspend enabled
+
+Tune `energy/tlp-server.conf` for your specific disk names and spindown timeouts.
