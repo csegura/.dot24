@@ -95,5 +95,14 @@ ln -s -f ~/.dotfiles/tmux/tmux.conf ~/.tmux.conf
 ln -s -f ~/.dotfiles/.Xdefaults ~/.Xdefaults
 ln -s -f ~/.dotfiles/git/.gitconfig ~/.gitconfig
 
+# backup config — create ~/.config/backup/backup.conf if not present
+mkdir -p ~/.config/backup
+if [ ! -f ~/.config/backup/backup.conf ]; then
+  cp ~/.dotfiles/misc/backup/backup.conf.example ~/.config/backup/backup.conf
+  echo "Created ~/.config/backup/backup.conf — edit SOURCES and SSH_KEY for this machine"
+else
+  echo "Already exists ~/.config/backup/backup.conf"
+fi
+
 # change shell
 sudo chsh --shell /bin/zsh $(whoami)

@@ -1,0 +1,50 @@
+# backup.conf.example — machine-specific config for backup.sh
+# ------------------------------------------------------------------
+# Copy this file to ONE of these locations and edit it:
+#   ~/.config/backup/backup.conf   (recommended — outside git)
+#   <script_dir>/backup.conf       (gitignored)
+# ------------------------------------------------------------------
+
+# Remote destination
+SSH_KEY="${HOME}/.ssh/nikita"
+REMOTE="romheat@nikita"
+DEST_BASE="~/usb/bak_acr"
+
+# How many snapshots to keep per source (oldest are pruned)
+KEEP_SNAPSHOTS=30
+
+# Override excludes file if needed (defaults to backup-excludes.txt next to the script)
+# EXCLUDES_FILE="${HOME}/.config/backup/backup-excludes.txt"
+
+# Override lock/log locations (useful if running from multiple machines simultaneously)
+# LOCK_FILE="/tmp/backup-acr-$(hostname).lock"
+# LOG_DIR="${HOME}/.local/share/backup-logs"
+
+# Sources: "dest_name:absolute_local_path"
+# dest_name  — subfolder created under DEST_BASE on the remote
+# local_path — absolute path to back up on this machine
+SOURCES=(
+  "backup-home:${HOME}"
+  "backup-prj:/mnt/e/prj"
+)
+
+# ---- Other machine examples ----
+#
+# macOS laptop:
+# SOURCES=(
+#   "backup-home:${HOME}"
+#   "backup-work:/Users/romheat/work"
+# )
+#
+# Linux workstation (no prj drive):
+# SOURCES=(
+#   "backup-home:${HOME}"
+# )
+#
+# Windows/WSL:
+# SSH_KEY="${HOME}/.ssh/nikita"
+# SOURCES=(
+#   "backup-home:${HOME}"
+#   "backup-prj:/mnt/e/prj"
+#   "backup-docs:/mnt/c/Users/romheat/Documents"
+# )
