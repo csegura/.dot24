@@ -51,6 +51,8 @@ check_package fd-find                   # better find (use with fuzzy find)
 # fzf from git (apt version is too old for fzf.vim)
 if [ ! -d ~/.fzf ]; then
   git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+fi
+if [ ! -f ~/.fzf/bin/fzf ]; then
   ~/.fzf/install --bin
 fi
 check_package vim                       # vim
