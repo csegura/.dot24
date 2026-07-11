@@ -84,7 +84,7 @@ else
 fi
 
 mkdir -p "$LOG_DIR"
-TIMESTAMP=$(date +%Y-%m-%dT%H:%M:%S)
+TIMESTAMP=$(date +%Y-%m-%dT%H-%M-%S)
 LOG_FILE="${LOG_DIR}/backup-${TIMESTAMP}.log"
 
 log() {
