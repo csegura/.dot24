@@ -56,7 +56,7 @@ if [ ! -f ~/.fzf/bin/fzf ]; then
   ~/.fzf/install --bin
 fi
 check_package vim                       # vim
-check_package batcat                    # better cat (used with fzf)
+check_package bat                       # better cat (used with fzf) - binary installed as batcat
 check_package wget
 # zoxide - z jumper
 if ! command -v zoxide &>/dev/null; then
