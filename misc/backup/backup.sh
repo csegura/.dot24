@@ -41,9 +41,11 @@ if [[ -z "$CONFIG_FILE" ]]; then
 fi
 
 # Defaults (override any of these in backup.conf)
+# Set REMOTE to empty string "" for local backup (DEST_BASE is a local path)
+# Set REMOTE to "user@host" for remote backup over SSH
 SSH_KEY="${HOME}/.ssh/nikita"
-REMOTE="romheat@nikita"
-DEST_BASE="~/usb/bak_acr"
+REMOTE=""
+DEST_BASE="/srv/backups"
 LOG_DIR="${HOME}/.local/share/backup-logs"
 LOCK_FILE="/tmp/backup-acr.lock"
 KEEP_SNAPSHOTS=30
@@ -119,17 +121,29 @@ trap cleanup EXIT
 # Start
 # ---------------------------------------------------------------------------
 $DRY_RUN && log WARN "DRY-RUN mode — no data will be transferred"
-log INFO "${BOLD}Backup started${RESET} → ${REMOTE}:${DEST_BASE}"
+if [[ -n "${REMOTE:-}" ]]; then
+  log INFO "${BOLD}Backup started${RESET} → ${REMOTE}:${DEST_BASE}"
+else
+  log INFO "${BOLD}Backup started${RESET} → ${DEST_BASE} (local)"
+fi
 log INFO "Log: $LOG_FILE"
 START_TIME=$(date +%s)
 
-# Check SSH connectivity
-log INFO "Checking SSH connectivity to ${REMOTE}..."
-if ! ssh -i "$SSH_KEY" -o ConnectTimeout=10 -o BatchMode=yes "$REMOTE" "exit 0" 2>/dev/null; then
-  log ERROR "Cannot reach ${REMOTE}. Aborting."
-  exit 1
+# Check connectivity / destination availability
+if [[ -n "${REMOTE:-}" ]]; then
+  log INFO "Checking SSH connectivity to ${REMOTE}..."
+  if ! ssh -i "$SSH_KEY" -o ConnectTimeout=10 -o BatchMode=yes "$REMOTE" "exit 0" 2>/dev/null; then
+    log ERROR "Cannot reach ${REMOTE}. Aborting."
+    exit 1
+  fi
+  log OK "SSH connection OK"
+else
+  if [[ ! -d "$DEST_BASE" ]]; then
+    log ERROR "Local destination not found: ${DEST_BASE} (is the disk mounted?)"
+    exit 1
+  fi
+  log OK "Local destination OK: ${DEST_BASE}"
 fi
-log OK "SSH connection OK"
 
 # Build rsync exclude options
 EXCLUDES_OPTS=()
@@ -160,36 +174,56 @@ for entry in "${SOURCES[@]}"; do
   snap_dir="${DEST_BASE}/${dest_name}/${TIMESTAMP}"
   prev_link="${DEST_BASE}/${dest_name}/current"
 
-  ssh -i "$SSH_KEY" "$REMOTE" "mkdir -p '${DEST_BASE}/${dest_name}'"
-
-  log INFO "Source:   $src_path"
-  log INFO "Snapshot: ${REMOTE}:${snap_dir}"
+  if [[ -n "${REMOTE:-}" ]]; then
+    ssh -i "$SSH_KEY" "$REMOTE" "mkdir -p '${DEST_BASE}/${dest_name}'"
+    log INFO "Source:   $src_path"
+    log INFO "Snapshot: ${REMOTE}:${snap_dir}"
+  else
+    mkdir -p "${DEST_BASE}/${dest_name}"
+    log INFO "Source:   $src_path"
+    log INFO "Snapshot: ${snap_dir}"
+  fi
 
   rsync_opts=(
     -aHAX
     --info=progress2
     --stats
-    -e "ssh -i $SSH_KEY"
     "${EXCLUDES_OPTS[@]}"
     --link-dest="${prev_link}/"
   )
-  $DRY_RUN    && rsync_opts+=(--dry-run)
-  $VERBOSE    && rsync_opts+=(-v)
+  [[ -n "${REMOTE:-}" ]] && rsync_opts+=(-e "ssh -i $SSH_KEY")
+  $DRY_RUN && rsync_opts+=(--dry-run)
+  $VERBOSE && rsync_opts+=(-v)
+
+  # Build destination argument (remote or local)
+  if [[ -n "${REMOTE:-}" ]]; then
+    rsync_dest="${REMOTE}:${snap_dir}/"
+  else
+    rsync_dest="${snap_dir}/"
+  fi
 
   src_ts=$(date +%s)
-  if rsync "${rsync_opts[@]}" "${src_path}/" "${REMOTE}:${snap_dir}/" 2>&1 | tee -a "$LOG_FILE"; then
+  if rsync "${rsync_opts[@]}" "${src_path}/" "${rsync_dest}" 2>&1 | tee -a "$LOG_FILE"; then
     elapsed=$(( $(date +%s) - src_ts ))
     if ! $DRY_RUN; then
       # Update 'current' symlink atomically
-      ssh -i "$SSH_KEY" "$REMOTE" \
-        "ln -sfn '${snap_dir}' '${prev_link}'"
-
-      # Prune oldest snapshots beyond KEEP_SNAPSHOTS
-      ssh -i "$SSH_KEY" "$REMOTE" "
-        cd '${DEST_BASE}/${dest_name}' &&
-        ls -1d [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]* 2>/dev/null \
-          | sort | head -n -${KEEP_SNAPSHOTS} | xargs -r rm -rf --
-      "
+      if [[ -n "${REMOTE:-}" ]]; then
+        ssh -i "$SSH_KEY" "$REMOTE" "ln -sfn '${snap_dir}' '${prev_link}'"
+        # Prune oldest snapshots beyond KEEP_SNAPSHOTS
+        ssh -i "$SSH_KEY" "$REMOTE" "
+          cd '${DEST_BASE}/${dest_name}' &&
+          ls -1d [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]* 2>/dev/null \
+            | sort | head -n -${KEEP_SNAPSHOTS} | xargs -r rm -rf --
+        "
+      else
+        ln -sfn "${snap_dir}" "${prev_link}"
+        # Prune oldest snapshots beyond KEEP_SNAPSHOTS
+        (
+          cd "${DEST_BASE}/${dest_name}" &&
+          ls -1d [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]* 2>/dev/null \
+            | sort | head -n -${KEEP_SNAPSHOTS} | xargs -r rm -rf --
+        )
+      fi
     fi
     log OK "${dest_name} done in ${elapsed}s"
   else

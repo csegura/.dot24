@@ -1,15 +1,14 @@
 #!/usr/bin/env bash
-# nfs_share.sh — manage NFS exports under /mnt
+# nfs_share.sh — manage NFS exports for any directory
 # Usage:
-#   nfs_share.sh add [<path>]      add a share (interactive if no path given)
-#   nfs_share.sh remove [<path>]   remove a share
+#   nfs_share.sh add <abs_path>    add a share (interactive if no path given)
+#   nfs_share.sh remove <abs_path> remove a share
 #   nfs_share.sh list              list current exports
 set -euo pipefail
 
 # ---------------------------------------------------------------------------
 # Config
 # ---------------------------------------------------------------------------
-MNT_BASE="/mnt"
 EXPORTS_FILE="/etc/exports"
 NFS_OPTS="*(rw,all_squash,insecure,async,no_subtree_check,anonuid=$(id -u),anongid=$(id -g))"
 OWNER="$(whoami)"
@@ -44,15 +43,15 @@ cmd_add() {
 
   # Interactive prompt if no path provided
   if [[ -z "$path" ]]; then
-    read -rp "Enter directory path (under ${MNT_BASE}/): " path
+    read -rp "Enter absolute directory path to export: " path
   fi
 
-  # Validate — no empty, no absolute (we add the base), no traversal
-  [[ -z "$path" ]]           && error "Path cannot be empty."
-  [[ "$path" == /* ]]        && error "Enter a relative path under ${MNT_BASE}/, not an absolute path."
-  [[ "$path" == *..* ]]      && error "Path traversal (..) is not allowed."
+  # Validate — must be absolute, no traversal
+  [[ -z "$path" ]]       && error "Path cannot be empty."
+  [[ "$path" != /* ]]    && error "Path must be absolute (e.g. /srv/backups or /mnt/data)."
+  [[ "$path" == *..* ]] && error "Path traversal (..) is not allowed."
 
-  local share="${MNT_BASE}/${path}"
+  local share="$path"
 
   # Create directory if needed
   if [[ ! -d "$share" ]]; then
@@ -130,8 +129,8 @@ case "$CMD" in
   *)
     echo "Usage: $(basename "$0") <add|remove|list> [path]"
     echo ""
-    echo "  add [path]     Export a directory under ${MNT_BASE}/ via NFS"
-    echo "  remove [path]  Remove an NFS export"
+    echo "  add <path>     Export any absolute directory path via NFS"
+    echo "  remove <path>  Remove an NFS export"
     echo "  list           Show current exports"
     exit 2
     ;;

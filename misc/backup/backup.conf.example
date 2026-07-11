@@ -5,10 +5,12 @@
 #   <script_dir>/backup.conf       (gitignored)
 # ------------------------------------------------------------------
 
-# Remote destination
-SSH_KEY="${HOME}/.ssh/nikita"
-REMOTE="romheat@nikita"
-DEST_BASE="~/usb/bak_acr"
+# Destination — local disk mount (REMOTE="") or remote SSH host
+# Local: leave REMOTE empty; DEST_BASE is a local path (e.g. a mounted USB disk)
+# Remote: set REMOTE="user@host"; DEST_BASE is the path on the remote host
+REMOTE=""
+DEST_BASE="/srv/backups"
+# SSH_KEY="${HOME}/.ssh/nikita"   # only needed when REMOTE is set
 
 # How many snapshots to keep per source (oldest are pruned)
 KEEP_SNAPSHOTS=30
@@ -30,13 +32,18 @@ SOURCES=(
 
 # ---- Other machine examples ----
 #
-# macOS laptop:
+# macOS laptop (local USB disk):
+# REMOTE=""
+# DEST_BASE="/Volumes/Backup"
 # SOURCES=(
 #   "backup-home:${HOME}"
 #   "backup-work:/Users/romheat/work"
 # )
 #
-# Linux workstation (no prj drive):
+# Linux workstation → remote server:
+# REMOTE="romheat@nikita"
+# SSH_KEY="${HOME}/.ssh/nikita"
+# DEST_BASE="~/usb/bak_acr"
 # SOURCES=(
 #   "backup-home:${HOME}"
 # )
