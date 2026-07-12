@@ -103,10 +103,12 @@ cmd_run() {
   $dry_run && warn "DRY RUN — no data will be written."
   sep
 
+  local group_dir="${DEST_BASE}/${HOST}-system"
+
   for entry in "${SOURCES[@]}"; do
     local name="${entry%%:*}"
     local src_path="${entry#*:}"
-    local dest_dir="${DEST_BASE}/${HOST}-${name}"
+    local dest_dir="${group_dir}/${name}"
     local snap_dir="${dest_dir}/${timestamp}"
     local current_link="${dest_dir}/current"
 
@@ -262,20 +264,21 @@ cmd_status() {
   echo
 
   # Last snapshot per source
-  bold "Last Snapshots"
+  local group_dir="${DEST_BASE}/${HOST}-system"
+  bold "Last Snapshots  (${group_dir})"
   sep
   for entry in "${SOURCES[@]}"; do
     local name="${entry%%:*}"
-    local dest_dir="${DEST_BASE}/${HOST}-${name}"
+    local dest_dir="${group_dir}/${name}"
     local current_link="${dest_dir}/current"
     if [[ -L "$current_link" ]]; then
       local last
       last=$(readlink "$current_link" | xargs basename)
       local size
       size=$(du -sh "${current_link}" 2>/dev/null | cut -f1 || echo "?")
-      printf '  \033[1;36m%-20s\033[0m %s  (%s)\n' "${HOST}-${name}" "$last" "$size"
+      printf '  \033[1;36m%-16s\033[0m %s  (%s)\n' "${name}" "$last" "$size"
     else
-      printf '  \033[2m%-20s\033[0m  no snapshot yet\n' "${HOST}-${name}"
+      printf '  \033[2m%-16s\033[0m  no snapshot yet\n' "${name}"
     fi
   done
   echo
@@ -291,16 +294,17 @@ cmd_status() {
 # list command
 # ---------------------------------------------------------------------------
 cmd_list() {
-  bold "═══ Snapshots — ${HOST}"
+  local group_dir="${DEST_BASE}/${HOST}-system"
+  bold "═══ Snapshots — ${group_dir}"
   sep
   for entry in "${SOURCES[@]}"; do
     local name="${entry%%:*}"
-    local dest_dir="${DEST_BASE}/${HOST}-${name}"
+    local dest_dir="${group_dir}/${name}"
     local current_link="${dest_dir}/current"
     local current_target=""
     [[ -L "$current_link" ]] && current_target=$(readlink "$current_link")
 
-    bold "  ${HOST}-${name}"
+    bold "  ${name}"
     if [[ -d "$dest_dir" ]]; then
       find "$dest_dir" -mindepth 1 -maxdepth 1 -type d | sort -r | while read -r snap; do
         local label=""

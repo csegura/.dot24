@@ -80,12 +80,16 @@ sbak enable
 **Snapshot layout:**
 ```
 /srv/backups/
-  adal-etc/
-    2026-07-12T03:00:00/   ← timestamped snapshot
-    current -> ...         ← symlink to latest
-  adal-projects/
-  adal-config/
-  adal-dotfiles/
+  adal-system/
+    etc/
+      2026-07-12T03:00:00/   ← timestamped snapshot
+      current -> ...         ← symlink to latest
+    projects/
+      ...
+    config/
+      ...
+    dotfiles/
+      ...
 ```
 
 | Config key | Default | Description |
