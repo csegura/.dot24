@@ -4,8 +4,8 @@
 #
 # Commands:
 #   run             Perform backup now (all sources)
-#   enable          Install and enable systemd timer (requires sudo)
-#   disable         Disable systemd timer (requires sudo)
+#   enable          Install and enable systemd timer (prompts for sudo internally)
+#   disable         Disable systemd timer (prompts for sudo internally)
 #   status          Show timer state, last snapshots and disk usage
 #   list            List all snapshots per source
 #
@@ -25,12 +25,16 @@ SERVICE_NAME="${HOST}-backup"
 SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}.service"
 TIMER_FILE="/etc/systemd/system/${SERVICE_NAME}.timer"
 
+# Resolve the real user's home (works when called via sudo too)
+REAL_USER="${SUDO_USER:-${USER}}"
+REAL_HOME="$(getent passwd "$REAL_USER" | cut -d: -f6)"
+
 # ---------------------------------------------------------------------------
 # Config
 # ---------------------------------------------------------------------------
 CONFIG_FILE=""
 for candidate in \
-    "${HOME}/.config/backup/server-backup.conf" \
+    "${REAL_HOME}/.config/backup/server-backup.conf" \
     "${SCRIPT_DIR}/server-backup.conf"; do
   if [[ -f "$candidate" ]]; then
     CONFIG_FILE="$candidate"
@@ -190,13 +194,10 @@ cmd_run() {
 cmd_enable() {
   local script_path
   script_path="$(realpath "$0")"
-  local run_user="${SUDO_USER:-${USER}}"
-  local run_home
-  run_home="$(getent passwd "$run_user" | cut -d: -f6)"
 
   bold "Installing systemd units for ${HOST}…"
 
-  cat > "$SERVICE_FILE" <<EOF
+  sudo tee "$SERVICE_FILE" > /dev/null <<EOF
 [Unit]
 Description=Server backup (${HOST})
 After=local-fs.target
@@ -205,13 +206,13 @@ RequiresMountsFor=${DEST_BASE}
 [Service]
 Type=oneshot
 ExecStart=${script_path} run
-User=${run_user}
+User=${REAL_USER}
 StandardOutput=journal
 StandardError=journal
 SyslogIdentifier=${SERVICE_NAME}
 EOF
 
-  cat > "$TIMER_FILE" <<EOF
+  sudo tee "$TIMER_FILE" > /dev/null <<EOF
 [Unit]
 Description=Daily server backup (${HOST}) at ${SCHEDULE}
 
@@ -224,10 +225,10 @@ RandomizedDelaySec=5min
 WantedBy=timers.target
 EOF
 
-  systemctl daemon-reload
-  systemctl enable --now "${SERVICE_NAME}.timer"
+  sudo systemctl daemon-reload
+  sudo systemctl enable --now "${SERVICE_NAME}.timer"
   ok "Timer enabled: ${SERVICE_NAME}.timer"
-  systemctl status "${SERVICE_NAME}.timer" --no-pager -l | head -12
+  sudo systemctl status "${SERVICE_NAME}.timer" --no-pager -l | head -12
 }
 
 # ---------------------------------------------------------------------------
@@ -235,8 +236,8 @@ EOF
 # ---------------------------------------------------------------------------
 cmd_disable() {
   bold "Disabling ${SERVICE_NAME}.timer…"
-  if systemctl is-active --quiet "${SERVICE_NAME}.timer" 2>/dev/null; then
-    systemctl disable --now "${SERVICE_NAME}.timer"
+  if sudo systemctl is-active --quiet "${SERVICE_NAME}.timer" 2>/dev/null; then
+    sudo systemctl disable --now "${SERVICE_NAME}.timer"
     ok "Timer disabled."
   else
     info "Timer was not active."
@@ -253,10 +254,10 @@ cmd_status() {
 
   # Systemd timer state
   bold "Timer"
-  if systemctl is-enabled --quiet "${SERVICE_NAME}.timer" 2>/dev/null; then
-    systemctl status "${SERVICE_NAME}.timer" --no-pager -l 2>/dev/null | head -10 | sed 's/^/  /'
+  if sudo systemctl is-enabled --quiet "${SERVICE_NAME}.timer" 2>/dev/null; then
+    sudo systemctl status "${SERVICE_NAME}.timer" --no-pager -l 2>/dev/null | head -10 | sed 's/^/  /'
   else
-    info "  Timer not installed (run: sudo server-backup.sh enable)"
+    info "  Timer not installed (run: sbak enable)"
   fi
   echo
 

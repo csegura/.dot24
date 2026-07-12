@@ -104,8 +104,8 @@ Docker
 System Backup
   sbak run      Run backup now
   sbak run -n   Dry-run preview
-  sbak enable   Install systemd timer (sudo)
-  sbak disable  Disable timer (sudo)
+  sbak enable   Install systemd timer (uses sudo internally)
+  sbak disable  Disable timer (uses sudo internally)
   sbak status   Timer state + last snapshot dates
   sbak list     List all snapshots per source
 

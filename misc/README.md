@@ -63,8 +63,8 @@ so the same script works on any machine without config changes.
 sbak run              # run backup now
 sbak run -n           # dry-run (preview only)
 sbak run -v           # verbose rsync output
-sudo sbak enable      # install + enable systemd timer
-sudo sbak disable     # disable timer (manual run still works)
+sbak enable           # install + enable systemd timer (uses sudo internally)
+sbak disable          # disable timer (uses sudo internally)
 sbak status           # timer state, last snapshot dates, disk usage
 sbak list             # list all snapshots per source
 ```
@@ -74,7 +74,7 @@ sbak list             # list all snapshots per source
 cp ~/.dotfiles/misc/backup/server-backup.conf.example \
    ~/.config/backup/server-backup.conf
 # Edit SOURCES, DEST_BASE, SCHEDULE as needed
-sudo sbak enable
+sbak enable
 ```
 
 **Snapshot layout:**
