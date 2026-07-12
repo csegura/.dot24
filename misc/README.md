@@ -52,6 +52,55 @@ failure summary.
 
 ---
 
+### `backup/server-backup.sh` — Local incremental system backup
+
+Backs up local system paths to the mounted backup disk (`/srv/backups`) using
+rsync `--link-dest` snapshots. Destination folders are named `$(hostname)-<name>`
+so the same script works on any machine without config changes.
+
+**Usage:**
+```bash
+sbak run              # run backup now
+sbak run -n           # dry-run (preview only)
+sbak run -v           # verbose rsync output
+sudo sbak enable      # install + enable systemd timer
+sudo sbak disable     # disable timer (manual run still works)
+sbak status           # timer state, last snapshot dates, disk usage
+sbak list             # list all snapshots per source
+```
+
+**Setup on a new machine:**
+```bash
+cp ~/.dotfiles/misc/backup/server-backup.conf.example \
+   ~/.config/backup/server-backup.conf
+# Edit SOURCES, DEST_BASE, SCHEDULE as needed
+sudo sbak enable
+```
+
+**Snapshot layout:**
+```
+/srv/backups/
+  adal-etc/
+    2026-07-12T03:00:00/   ← timestamped snapshot
+    current -> ...         ← symlink to latest
+  adal-projects/
+  adal-config/
+  adal-dotfiles/
+```
+
+| Config key | Default | Description |
+|---|---|---|
+| `DEST_BASE` | `/srv/backups` | Backup disk mount point |
+| `KEEP_SNAPSHOTS` | `30` | Snapshots to retain per source |
+| `SCHEDULE` | `03:00` | Daily timer time (HH:MM) |
+| `SOURCES` | *(required)* | Array of `"name:path"` pairs |
+
+**Features:** lock file (no concurrent runs), rsync exit-23/24 treated as
+warning (unreadable files), automatic snapshot pruning, systemd timer with
+`Persistent=true` (catches up missed runs after downtime).
+
+---
+
 ### `nfs/nfs_share.sh` — NFS export manager
 
 Creates, removes and lists NFS exports under `/mnt/`. Auto-detects current

@@ -83,6 +83,9 @@ alias dksh='docker exec -it'
 alias dki='~/.dotfiles/misc/docker/docker-info.sh'
 alias dkp='~/.dotfiles/misc/docker/docker-prune.sh'
 
+# server backup
+alias sbak='~/.dotfiles/misc/backup/server-backup.sh'
+
 # btop
 alias top='btop'
 

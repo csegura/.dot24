@@ -101,6 +101,14 @@ Docker
   dki           docker-info.sh (engine, images, containers, disk)
   dkp           docker-prune.sh (safe cleanup with dry-run)
 
+System Backup
+  sbak run      Run backup now
+  sbak run -n   Dry-run preview
+  sbak enable   Install systemd timer (sudo)
+  sbak disable  Disable timer (sudo)
+  sbak status   Timer state + last snapshot dates
+  sbak list     List all snapshots per source
+
 Tools
   vman          Man pages in vim
   btail         tail -f with batcat

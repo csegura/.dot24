@@ -1,0 +1,27 @@
+# server-backup.conf.example — local backup config for server-backup.sh
+# ------------------------------------------------------------------
+# Copy this file to:  ~/.config/backup/server-backup.conf  and edit it.
+# This file is gitignored — never commit machine-specific paths here.
+# ------------------------------------------------------------------
+
+# Base path of the mounted backup disk
+DEST_BASE="/srv/backups"
+
+# Number of snapshots to keep per source (oldest are pruned automatically)
+KEEP_SNAPSHOTS=30
+
+# Daily schedule for the systemd timer (24h format, HH:MM)
+SCHEDULE="03:00"
+
+# Excludes file (defaults to backup-excludes.txt next to this script)
+# EXCLUDES_FILE="${HOME}/.config/backup/server-backup-excludes.txt"
+
+# Sources: "name:absolute_path"
+# Snapshots are stored as: ${DEST_BASE}/$(hostname)-<name>/<timestamp>/
+# Tip: use short names — they appear in status output and disk listing.
+SOURCES=(
+  "etc:/etc"
+  "projects:/srv/projects"
+  "config:${HOME}/.config"
+  "dotfiles:${HOME}/.dotfiles"
+)
