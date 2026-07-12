@@ -80,6 +80,8 @@ alias dkc='docker compose'
 alias dkps='docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"'
 alias dklog='docker logs -f'
 alias dksh='docker exec -it'
+alias dki='~/.dotfiles/misc/docker/docker-info.sh'
+alias dkp='~/.dotfiles/misc/docker/docker-prune.sh'
 
 # btop
 alias top='btop'
@@ -88,4 +90,16 @@ alias top='btop'
 alias dpkglist='dpkg --get-selections | grep -v deinstall'
 alias dpkgsearch='dpkg --get-selections | grep -i'  
 alias installed='dpkg -l | grep ^ii'
+
+# systemd / journalctl
+alias sc='sudo systemctl'
+alias scs='systemctl status'
+alias scl='sudo systemctl list-units --state=failed'
+alias jc='sudo journalctl -xe'
+alias jcf='sudo journalctl -fu'   # follow a unit: jcf caddy
+
+# tailscale
+alias ts='tailscale'
+alias tss='tailscale status'
+alias tsip='tailscale ip -4'
 

@@ -30,8 +30,8 @@ unsetopt CORRECT		 	      # Disable corrector
 setopt MONITOR              # Enable job control
 
 # History
-HISTSIZE=10000
-SAVEHIST=10000
+HISTSIZE=100000
+SAVEHIST=100000
 HISTFILE=~/.cache/zsh/history
 setopt appendhistory
 
@@ -63,8 +63,13 @@ eval "$(dircolors ~/.dotfiles/misc/.dircolors )"
 export PATH="$HOME/.fzf/bin:$PATH:/usr/sbin:/home/romheat/.local/bin"
 
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+# Lazy-load nvm: only sourced on first use (saves ~200ms startup)
+if [[ -s "$NVM_DIR/nvm.sh" ]]; then
+  nvm()  { unset -f nvm node npm npx; . "$NVM_DIR/nvm.sh"; nvm "$@" }
+  node() { unset -f nvm node npm npx; . "$NVM_DIR/nvm.sh"; node "$@" }
+  npm()  { unset -f nvm node npm npx; . "$NVM_DIR/nvm.sh"; npm "$@" }
+  npx()  { unset -f nvm node npm npx; . "$NVM_DIR/nvm.sh"; npx "$@" }
+fi
 
 if is_wsl; then
   # ensure sudo apt install -y wslu

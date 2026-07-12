@@ -1,4 +1,10 @@
-autoload -U compinit; compinit                                                                                       
+autoload -U compinit
+# Rebuild completion cache at most once per day for faster startup
+if [[ -n ${ZDOTDIR:-$HOME}/.zcompdump(#qN.mh+24) ]]; then
+  compinit
+else
+  compinit -C
+fi                                                                                       
 zmodload -i zsh/complist
 
 setopt AUTO_LIST

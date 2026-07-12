@@ -44,7 +44,7 @@ check_symlink "$HOME/.gitconfig" "$DOTFILES/git/.gitconfig"
 echo ""
 
 echo "Required tools"
-for cmd in zsh fzf fdfind batcat rg eza zoxide vim git btop; do
+for cmd in zsh fzf fdfind batcat zoxide vim git tmux btop docker; do
   check "$cmd" command -v "$cmd"
 done
 echo ""

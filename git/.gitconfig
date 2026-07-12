@@ -89,7 +89,7 @@
 	whitespace=fix,-indent-with-non-tab,trailing-space,cr-at-eol,tabwidth=2
 
 [diff]
-  algorithm = minimal
+  algorithm = histogram
 
 [fetch]
   prune = true
