@@ -1,4 +1,4 @@
-# 2025 Config files
+# 2026 Config files
 
 Minimal dotfiles setup — zsh, vim, tmux, fzf — with as few third-party tools as possible.
 
@@ -98,6 +98,8 @@ Docker
   dkps          docker ps (formatted)
   dklog         docker logs -f
   dksh          docker exec -it
+  dki           docker-info.sh (engine, images, containers, disk)
+  dkp           docker-prune.sh (safe cleanup with dry-run)
 
 Tools
   vman          Man pages in vim
@@ -114,6 +116,18 @@ System
   installed     dpkg -l installed
   wiki          DNS TXT lookup (wp.dg.cx)
   o             wsl open (cmd.exe /c start)
+
+Systemd
+  sc            sudo systemctl
+  scs           systemctl status <unit>
+  scl           List failed units
+  jc            journalctl -xe
+  jcf           journalctl -fu <unit> (follow)
+
+Tailscale
+  ts            tailscale
+  tss           tailscale status
+  tsip          tailscale ip -4
 ```
 
 ### Keyboard (vi-mode)
